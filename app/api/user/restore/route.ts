@@ -1,4 +1,5 @@
 import errorHandler from "@/libs/api/errorHandler";
+import { validateIdList } from "@/libs/api/user/validateIdList";
 import { prisma } from "@/libs/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,12 +7,15 @@ export async function PATCH(
     request: NextRequest
 ): Promise<NextResponse> {
     const body = await request.json();
-    const ids: number[] = body.ids || [];
+    const validatedIds = validateIdList(body.ids);
+
+    if(!validatedIds.valid) { return validatedIds.response }
 
     try {
         const restored = await prisma.user.updateMany({
             where: {
-                id: { in: ids }
+                id: { in: validatedIds.data },
+                deletedAt: { not: null }
             },
             data: {
                 deletedAt: null,

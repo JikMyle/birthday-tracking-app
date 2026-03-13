@@ -45,3 +45,6 @@ next-env.d.ts
 
 # dev documents
 docs/
+
+# test directory
+test/
