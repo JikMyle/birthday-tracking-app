@@ -11,7 +11,7 @@ async function seedUserTable() {
     try {
         await prisma.user.deleteMany({});
 
-        const users = createUsers(20);
+        const users = createUsers(365);
         const admin: User = {
             id: 0,
             username: "admin",
