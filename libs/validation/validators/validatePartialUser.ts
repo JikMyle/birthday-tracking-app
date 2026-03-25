@@ -1,17 +1,15 @@
 import { User } from "@/generated/prisma/client";
-import { newUserSchema } from "@/libs/validation/userSchema";
+import { partialUserSchema } from "@/libs/validation/schemas/userSchema";
 import { NextResponse } from "next/server";
 import z from "zod";
 
-type omittedFields = 
-    | "id" | "deletedAt" | "createdAt" | "updatedAt" 
-    | "emailVerified" | "verificationToken" | "tokenExpiresAt";
 
-export default function validateNewUser(userData: unknown):
-    | { valid: true; data: Omit<User, omittedFields> }
+
+export default function validatePartialUser(userData: unknown):
+    | { valid: true; data: Partial<User> }
     | { valid: false; response: NextResponse} 
 {
-    const result = newUserSchema.safeParse(userData);
+    const result = partialUserSchema.safeParse(userData);
 
     if(!result.success) {
         return {
@@ -19,7 +17,7 @@ export default function validateNewUser(userData: unknown):
             response: NextResponse.json(
                 { 
                     message: "Invalid user data",
-                    errors: z.flattenError(result.error).fieldErrors,
+                    errors: z.flattenError(result.error).fieldErrors
                 },
                 { status: 400 }
             )

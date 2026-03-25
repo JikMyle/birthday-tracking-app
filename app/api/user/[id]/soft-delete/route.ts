@@ -1,5 +1,5 @@
-import errorHandler from "@/libs/api/errorHandler";
-import validateId from "@/libs/api/user/validateId";
+import errorHandler from "@/libs/errorHandler";
+import validateId from "@/libs/validation/validators/validateId";
 import { prisma } from "@/libs/db/prisma";
 import { NextResponse } from "next/server";
 

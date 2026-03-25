@@ -1,7 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
-import errorHandler from "@/libs/api/errorHandler";
-import { validateIdList } from "@/libs/api/user/validateIdList";
-import validateNewUser from "@/libs/api/user/validateNewUser";
+import errorHandler from "@/libs/errorHandler";
+import { validateIdList } from "@/libs/validation/validators/validateIdList";
+import validateNewUser from "@/libs/validation/validators/validateNewUser";
 import { prisma } from "@/libs/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
 

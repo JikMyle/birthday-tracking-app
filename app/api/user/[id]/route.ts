@@ -1,6 +1,6 @@
-import errorHandler from "@/libs/api/errorHandler";
-import validateId from "@/libs/api/user/validateId";
-import validatePartialUser from "@/libs/api/user/validatePartialUser";
+import errorHandler from "@/libs/errorHandler";
+import validateId from "@/libs/validation/validators/validateId";
+import validatePartialUser from "@/libs/validation/validators/validatePartialUser";
 import { prisma } from "@/libs/db/prisma";
 import { NextRequest, NextResponse } from "next/server";
 

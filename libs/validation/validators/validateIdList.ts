@@ -1,4 +1,4 @@
-import { idSchema } from "@/libs/validation/userSchema";
+import { idSchema } from "@/libs/validation/schemas/userSchema";
 import { NextResponse } from "next/server";
 import z from "zod";
 

@@ -1,7 +1,7 @@
 import { Prisma } from "@/generated/prisma/client";
-import errorHandler from "@/libs/api/errorHandler";
+import errorHandler from "@/libs/errorHandler";
 import { prisma } from "@/libs/db/prisma";
-import { birthdaySearchSchema, dayOfMonthSchema } from "@/libs/validation/dateSchema";
+import { birthdaySearchSchema, dayOfMonthSchema } from "@/libs/validation/schemas/dateSchema";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
