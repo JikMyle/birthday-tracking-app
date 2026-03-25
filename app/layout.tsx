@@ -13,8 +13,8 @@ const robotoMono = Roboto_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Happy Birthday",
-  description: "A website that tells you many how many people are having a birthday today",
+  title: "BDBashboard",
+  description: "A place to see how big the birthday bash is today.",
 };
 
 export default function RootLayout({

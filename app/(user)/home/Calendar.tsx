@@ -1,77 +1,124 @@
-export default function Calendar(): React.ReactNode {
+'use client'
+
+import Button from "@/app/components/Button"
+import Spacer from "@/app/components/Spacer"
+import { MONTHS } from "@/libs/months"
+import { ChevronLeft, ChevronRight, ChevronsUp } from "lucide-react"
+import { ReactNode } from "react"
+import { CalendarContext, CalendarState, useCalendarContext, VIEW_TYPES, ViewType } from "./context/CalendarContext"
+import { CalendarBodyMonth } from "./CalendayBodyMonth"
+import CalendarBodyYear from "./CalendarBodyYear"
+
+export default function Calendar(): ReactNode {
     return (
-        <div className="flex flex-col border-2 border-black w-full md:w-2xl h-96 md:h-128 rounded-2xl overflow-hidden">
-            {/* Calendar Header */}
-            <div className="flex justify-between items-center h-1/6 border-b-2 border-black">
-                <button className="flex md:hidden btn h-full">lBtn</button>
-                <div className="grow flex flex-col gap-1 justify-center items-center text-base-content">
+        <section className="card bg-base-100 shadow-md w-full md:w-2xl h-96 md:h-128 overflow-hidden">
+            <CalendarHeader/>
+            <CalendarBody/>
+        </section>
+    )
+}
 
-                    <div className="flex justify-center items-center gap-2">
+function CalendarHeader(): ReactNode {
+    const { state, dispatch } = useCalendarContext()
 
-                        <button className="btn btn-xs hidden md:block">lBtn</button>
-                        <div className="flex flex-col justify-center items-center">
+    const monthName = state.details[state.month].name.toUpperCase()
+    const prevMonth = state.month - 1 < 0 ? 11 : state.month - 1;
+    const nextMonth = state.month + 1 > 11 ? 0 : state.month + 1;
 
-                            {/* Month display is a button to return to year view */}
-                            <button className="btn btn-neutral btn-outline">
-                                <h3 className="text-2xl w-[9ch] text-center">Month</h3>
-                            </button>
-                        </div>
-                        <button className="btn btn-xs hidden md:block">rBtn</button>
+    const handleMoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const value = Number(e.currentTarget.value)
 
-                    </div>
+        if(Number.isNaN(value) || value > 11 || value < 0) {
+            console.log("Invalid valid value for month")
+            return;
+        }
 
-                    <span className="text-xs leading-2 text-base-content/70">????? birthdays</span>
-                </div>
-                <button className="btn flex md:hidden h-full">rBtn</button>
+        dispatch({ type: "CHANGE_TO_MONTH", month: value })
+    }
+
+    return (
+        <div className="flex items-center h-1/6 bg-primary text-primary-content overflow-hidden">
+            <CalendarUpButton/>
+
+            <div className={`flex flex-col px-2`}>
+                {/* Month and year */}
+                <h3 className="text-sm md:text-2xl w-[14ch] text-start font-extrabold">
+                    { state.viewType !== 'year' && monthName } { state.year }
+                </h3>
+
+                {/* Monthy birthday counter */}
+                <CalendarHeaderCounter/>
             </div>
 
-            {/* Calendar Body */}
+            <Spacer/>
 
-            {/* Month Calendar */}
-            <div className="hidden grid grid-cols-7 grid-rows-5 grow text-base-content">
-                <div className="w-full h-full border-white"></div>
-                <div className="w-full h-full border-white"></div>
-                <div className="w-full h-full border-white"></div>
+            <Button className={`h-full rounded-none! btn-outline border-0 ${state.viewType !== 'month' && "hidden"}`}
+                aria-label={`Move to ${MONTHS[prevMonth]}`}
+                value={ prevMonth }
+                onClick={handleMoveClick}>
+                <ChevronLeft/>
+            </Button>
 
-                {
-                    Array.from({ length: 31}).map((x) => CalendarDate())
-                    
-                }
-                
-                <div className="w-full h-full border-white"></div>
-            </div>
-
-            {/* Year Calendar */}
-            <div className="grow grid grid-cols-4 grid-rows-3 text-base-content">
-                {
-                    CalendarMonths()
-                }
-            </div>
+            <Button className={`h-full rounded-none! btn-outline border-0 border-l ${state.viewType !== 'month' && "hidden"}`}
+                aria-label={`Move to ${MONTHS[nextMonth]}`}
+                value={ nextMonth }
+                onClick={handleMoveClick}>
+                <ChevronRight/>
+            </Button>
         </div>
     )
 }
 
+function CalendarUpButton(): ReactNode {
+    const { state, dispatch } = useCalendarContext();
 
+    const handleUpClick = () => {
+        console.log("asdad")
+        dispatch({ type: 'CHANGE_VIEW_TYPE', viewType: 'year'})
+    }
 
-function CalendarMonths(): React.ReactNode {
     return (
-        <>
-            {
-                Array.from({length: 12}).map(() =>
-                    <div className="border-2 border-white relative w-full h-full p-2 flex justify-center items-center overflow-hidden">
-                        <span className="w-full max-sm:text-sm text-center leading-4">Septem&shy;ber</span>
-                    </div>
-                )
-            }
-        </>
+        <Button className={`h-full rounded-none! max-md:p-2 btn-outline border-0 border-r flex flex-col
+                ${state.viewType === 'year' && "invisible"}`}
+            aria-label="Return to year"
+            onClick={handleUpClick}>
+            <ChevronsUp/>
+        </Button>
     )
 }
 
-function CalendarDate(): React.ReactNode {
+function CalendarHeaderCounter(): ReactNode {
+    const { state } = useCalendarContext()
+    let message = ""
+
+    if(state.viewType === 'year') {
+        message = `${state.total} people are having birthdays this year`
+    }
+
+    if(state.viewType === 'month') {
+        message = `${state.details[state.month].total} are having birthdays this month`
+    }
+
     return (
-        <div className="relative w-full h-full border-white border-2 flex flex-col justify-center items-center">
-            <span className="text-2xl">1</span>
-            <span className="absolute mx-auto bottom-0 leading-4 text-xs text-base-content/70">23</span>
-        </div>
+        <span className="text-xs leading-4 text-primary-content">
+            { message }
+        </span>
     )
 }
+
+function CalendarBody(): ReactNode {
+    const { state } = useCalendarContext()
+
+    switch(state.viewType) {
+        case 'year':
+            return (
+                <CalendarBodyYear/>
+            )
+
+        default:
+            return (
+                <CalendarBodyMonth/>
+            )
+    }
+}
+
