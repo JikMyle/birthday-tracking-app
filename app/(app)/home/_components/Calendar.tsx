@@ -1,39 +1,43 @@
 'use client'
 
-import Button from "@/app/components/Button"
-import Spacer from "@/app/components/Spacer"
+import Button from "@/app/_components/Button"
+import Spacer from "@/app/_components/Spacer"
 import { MONTHS } from "@/libs/months"
 import { ChevronLeft, ChevronRight, ChevronsUp } from "lucide-react"
 import { ReactNode } from "react"
-import { CalendarContext, CalendarState, useCalendarContext, VIEW_TYPES, ViewType } from "./context/CalendarContext"
-import { CalendarBodyMonth } from "./CalendayBodyMonth"
-import CalendarBodyYear from "./CalendarBodyYear"
+import CalendarProvider, { useCalendarContext } from "../context"
+import { CalendarMonthGrid } from "./CalendayMonthGrid"
+import CalendarYearGrid from "./CalendarYearGrid"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+const client = new QueryClient()
 
 export default function Calendar(): ReactNode {
     return (
-        <section className="card bg-base-100 shadow-md w-full md:w-2xl h-96 md:h-128 overflow-hidden">
-            <CalendarHeader/>
-            <CalendarBody/>
-        </section>
+        <QueryClientProvider client={client}>
+            <CalendarProvider>
+                <section className="card bg-base-100 shadow-md w-full md:w-2xl h-96 md:h-128 overflow-hidden">
+                    <CalendarHeader/>
+                    <CalendarBody/>
+                </section>
+            </CalendarProvider>
+        </QueryClientProvider>
     )
 }
 
 function CalendarHeader(): ReactNode {
-    const { state, dispatch } = useCalendarContext()
+    const { state, dispatch, data } = useCalendarContext()
 
-    const monthName = state.details[state.month].name.toUpperCase()
+    const monthName = data?.birthdates[state.month].name || MONTHS[state.month - 1]
     const prevMonth = state.month - 1 < 0 ? 11 : state.month - 1;
     const nextMonth = state.month + 1 > 11 ? 0 : state.month + 1;
 
-    const handleMoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const value = Number(e.currentTarget.value)
+    const handleToPrevMonth = () => {
+        dispatch({ type: 'PREV_MONTH' })
+    }
 
-        if(Number.isNaN(value) || value > 11 || value < 0) {
-            console.log("Invalid valid value for month")
-            return;
-        }
-
-        dispatch({ type: "CHANGE_TO_MONTH", month: value })
+    const handleToNextMonth = () => {
+        dispatch({ type: 'NEXT_MONTH' })
     }
 
     return (
@@ -54,15 +58,13 @@ function CalendarHeader(): ReactNode {
 
             <Button className={`h-full rounded-none! btn-outline border-0 ${state.viewType !== 'month' && "hidden"}`}
                 aria-label={`Move to ${MONTHS[prevMonth]}`}
-                value={ prevMonth }
-                onClick={handleMoveClick}>
+                onClick={handleToPrevMonth}>
                 <ChevronLeft/>
             </Button>
 
             <Button className={`h-full rounded-none! btn-outline border-0 border-l ${state.viewType !== 'month' && "hidden"}`}
                 aria-label={`Move to ${MONTHS[nextMonth]}`}
-                value={ nextMonth }
-                onClick={handleMoveClick}>
+                onClick={handleToNextMonth}>
                 <ChevronRight/>
             </Button>
         </div>
@@ -74,7 +76,7 @@ function CalendarUpButton(): ReactNode {
 
     const handleUpClick = () => {
         console.log("asdad")
-        dispatch({ type: 'CHANGE_VIEW_TYPE', viewType: 'year'})
+        dispatch({ type: 'ZOOM_OUT_TO_YEAR'})
     }
 
     return (
@@ -88,15 +90,16 @@ function CalendarUpButton(): ReactNode {
 }
 
 function CalendarHeaderCounter(): ReactNode {
-    const { state } = useCalendarContext()
+    const { state, data } = useCalendarContext()
+    const count = data?.total || 0
     let message = ""
 
     if(state.viewType === 'year') {
-        message = `${state.total} people are having birthdays this year`
+        message = `${count} people are having birthdays this year`
     }
 
     if(state.viewType === 'month') {
-        message = `${state.details[state.month].total} are having birthdays this month`
+        message = `${count} are having birthdays this month`
     }
 
     return (
@@ -112,12 +115,12 @@ function CalendarBody(): ReactNode {
     switch(state.viewType) {
         case 'year':
             return (
-                <CalendarBodyYear/>
+                <CalendarYearGrid/>
             )
 
         default:
             return (
-                <CalendarBodyMonth/>
+                <CalendarMonthGrid/>
             )
     }
 }

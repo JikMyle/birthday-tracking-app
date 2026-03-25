@@ -1,4 +1,4 @@
-import Spacer from "../components/Spacer"
+import Spacer from "../_components/Spacer"
 
 export default function UserLayout({ 
     children 

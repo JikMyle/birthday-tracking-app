@@ -1,17 +1,17 @@
 import { MONTHS } from "@/libs/months";
 import { ReactNode } from "react";
-import { useCalendarContext } from "./context/CalendarContext";
+import { useCalendarContext } from "../context";
 import { CalendarCell } from "./CalendarCell";
 
-export default function CalendarBodyYear(): ReactNode {
-    const { state, dispatch } = useCalendarContext()
+export default function CalendarYearGrid(): ReactNode { 
+    const { state, dispatch, data } = useCalendarContext()
 
     const jumpToMonth = (month: number) => {
-        dispatch({ type: 'CHANGE_VIEW_TYPE', viewType: 'month', month: month})
+        dispatch({ type: 'JUMP_TO_MONTH', month: month})
     }
 
     const rows = MONTHS.map((month, index) => {
-        const count = state.details[index]?.total ?? 0;
+        const count = data?.total ?? 0;
 
         return (
             <CalendarCell 
@@ -19,7 +19,7 @@ export default function CalendarBodyYear(): ReactNode {
                 date={month} 
                 count={count}
                 label={`Jump to ${month}`}
-                onClick={ () => { jumpToMonth(index) } }/>
+                onClick={ () => { jumpToMonth(index + 1) } }/>
         )
     })
 

@@ -2,30 +2,30 @@
 
 import { ReactNode } from "react";
 import { CalendarCell } from "./CalendarCell";
-import { useCalendarContext } from "./context/CalendarContext";
+import { useCalendarContext } from "../context";
 
-export function CalendarBodyMonth(): ReactNode {
-    const { state } = useCalendarContext();
+export function CalendarMonthGrid(): ReactNode {
+    const { state, dispatch, data } = useCalendarContext();
 
     // Use UTC-based date math to avoid server-client date mismatch
     const firstDay = new Date(Date.UTC(state.year, state.month, 1)).getUTCDay();
     const lastDay = new Date(Date.UTC(state.year, state.month + 1, 0)).getUTCDate();
 
-    const dateCounts = state.details[state.month].counts;
+    const counts = data?.birthdates[state.month].days || {}
+    
     const cells: ReactNode[] = [];
-
     for (let index = (-1 * firstDay) + 1; index < 36 - firstDay; index++) {
         if (index < 1 || index > lastDay) {
             cells.push(<CalendarCell key={index} />);
             continue;
         }
 
-        if (!dateCounts[index]) {
+        if (!counts[index]) {
             cells.push(<CalendarCell key={index} date={index} />);
             continue;
         }
 
-        cells.push(<CalendarCell key={index} date={index} count={dateCounts[index]} />);
+        cells.push(<CalendarCell key={index} date={index} count={counts[index + 1]} />);
     }
 
     return (

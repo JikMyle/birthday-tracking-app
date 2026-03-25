@@ -1,12 +1,10 @@
-import Calendar from "./Calendar"
+import Calendar from "./_components/Calendar"
 
 export default function Home() {
     return (
         <div className="flex flex-col items-center">
-            <HomeHeading></HomeHeading>
-
-            {/* Calendar */}
-            <Calendar></Calendar>
+            <HomeHeading/>
+            <Calendar/>
         </div>
     )
 }
