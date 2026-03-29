@@ -1,34 +1,34 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ['latin']
-})
+const plusJakarta = Plus_Jakarta_Sans({
+    variable: "--font-plus-jakarta",
+    subsets: ["latin"],
+});
 
 const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ['latin']
-})
+    variable: "--font-roboto-mono",
+    subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "BDBashboard",
-  description: "A place to see how big the birthday bash is today.",
+    title: "BDBashboard",
+    description: "A place to see how big the birthday bash is today.",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" data-theme="light">
-      <body
-        className={`${inter.variable} ${robotoMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" data-theme="light">
+            <body
+                className={`${plusJakarta.variable} ${robotoMono.variable} antialiased`}
+            >
+                {children}
+            </body>
+        </html>
+    );
 }
