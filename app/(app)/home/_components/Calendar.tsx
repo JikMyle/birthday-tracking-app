@@ -1,10 +1,8 @@
 "use client";
 
 import Button from "@/app/_components/Button";
-import Spacer from "@/app/_components/Spacer";
 import { MONTHS } from "@/libs/months";
 import {
-    ChevronDown,
     ChevronLeft,
     ChevronRight,
     ChevronsDown,
@@ -22,7 +20,7 @@ export default function Calendar(): ReactNode {
     return (
         <QueryClientProvider client={client}>
             <CalendarProvider>
-                <section className="w-full md:w-2xl overflow-hidden">
+                <section className="w-full md:w-3xl overflow-hidden">
                     <Header />
                     <Body />
                 </section>
@@ -34,6 +32,26 @@ export default function Calendar(): ReactNode {
 function Header(): ReactNode {
     const { state, dispatch, data } = useCalendarContext();
 
+    return (
+        <header className="flex h-20 items-end mb-4">
+            <div className="flex flex-col grow">
+                <HeaderDate />
+                <HeaderCounter />
+            </div>
+
+            <div className="flex flex-col h-full w-24 md:w-48 justify-between">
+                <CalendarUpButton />
+                <ViewTypeToggle />
+
+                {state.viewType === "year" ? null : <CalendarNavigation />}
+            </div>
+        </header>
+    );
+}
+
+function CalendarNavigation(): ReactNode {
+    const { dispatch } = useCalendarContext();
+
     const handleToPrevMonth = () => {
         dispatch({ type: "PREV_MONTH" });
     };
@@ -42,37 +60,38 @@ function Header(): ReactNode {
         dispatch({ type: "NEXT_MONTH" });
     };
 
+    const handleToToday = () => {
+        dispatch({
+            type: "JUMP_TO_MONTH",
+            month: new Date().getUTCMonth() + 1,
+        });
+    };
+
     return (
-        <header className="flex h-20 items-end mb-4">
-            <div className="flex flex-col grow">
-                <HeaderDate />
-                <HeaderCounter />
-            </div>
+        <div className="flex w-full justify-between gap-2">
+            <Button
+                className="px-2 btn-primary btn-soft btn-sm md:btn-md"
+                onClick={handleToPrevMonth}
+                aria-label="Move to previous month"
+            >
+                <ChevronLeft size={24} />
+            </Button>
 
-            <div className="flex flex-col h-full w-24 justify-between">
-                <CalendarUpButton />
+            <Button
+                className="hidden md:flex btn-primary btn-soft btn-sm md:btn-md"
+                onClick={handleToToday}
+            >
+                Today
+            </Button>
 
-                {state.viewType === "year" ? null : (
-                    <div className="flex w-full justify-between">
-                        <Button
-                            className="px-2 btn-primary btn-soft btn-sm"
-                            onClick={handleToPrevMonth}
-                            aria-label="Move to previous month"
-                        >
-                            <ChevronLeft size={24} />
-                        </Button>
-
-                        <Button
-                            className="px-2 btn-primary btn-soft btn-sm"
-                            onClick={handleToNextMonth}
-                            aria-label="Move to next month"
-                        >
-                            <ChevronRight size={24} />
-                        </Button>
-                    </div>
-                )}
-            </div>
-        </header>
+            <Button
+                className="px-2 btn-primary btn-soft btn-sm md:btn-md"
+                onClick={handleToNextMonth}
+                aria-label="Move to next month"
+            >
+                <ChevronRight size={24} />
+            </Button>
+        </div>
     );
 }
 
@@ -89,7 +108,7 @@ function CalendarUpButton(): ReactNode {
 
     return (
         <Button
-            className={`btn-primary btn-soft btn-sm`}
+            className={`md:hidden btn-primary btn-soft btn-sm`}
             onClick={
                 state.viewType === "month" ? handleUpClick : handleJumpToMonth
             }
@@ -106,6 +125,37 @@ function CalendarUpButton(): ReactNode {
                 </>
             )}
         </Button>
+    );
+}
+
+function ViewTypeToggle(): ReactNode {
+    const { state, dispatch } = useCalendarContext();
+
+    const handleSwitchToYearClick = () => {
+        if (state.viewType === "year") return;
+        dispatch({ type: "ZOOM_OUT_TO_YEAR" });
+    };
+
+    const handleSwitchToMonthClick = () => {
+        if (state.viewType === "month") return;
+        dispatch({ type: "JUMP_TO_MONTH", month: state.month });
+    };
+
+    return (
+        <div className="hidden md:flex join w-full">
+            <Button
+                className={`grow btn-primary btn-sm join-item ${state.viewType !== "month" && "btn-soft"}`}
+                onClick={handleSwitchToMonthClick}
+            >
+                Month
+            </Button>
+            <Button
+                className={`grow btn-primary btn-sm join-item ${state.viewType !== "year" && "btn-soft"}`}
+                onClick={handleSwitchToYearClick}
+            >
+                Year
+            </Button>
+        </div>
     );
 }
 
