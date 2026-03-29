@@ -4,7 +4,7 @@ import { useCalendarContext } from "../context";
 import { CalendarCell } from "./CalendarCell";
 
 export default function CalendarYearGrid(): ReactNode {
-    const { dispatch, data } = useCalendarContext();
+    const { state, dispatch, data } = useCalendarContext();
 
     const jumpToMonth = (month: number) => {
         dispatch({ type: "JUMP_TO_MONTH", month: month });
@@ -19,6 +19,7 @@ export default function CalendarYearGrid(): ReactNode {
             <CalendarCell
                 key={index}
                 date={month.slice(0, 3)}
+                today={new Date().getUTCMonth() === index}
                 count={count}
                 label={`Jump to ${month}`}
                 onClick={() => {

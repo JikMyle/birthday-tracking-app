@@ -31,7 +31,7 @@ export function CalendarMonthGrid(): ReactNode {
 
         const now = new Date();
         const today =
-            now.getUTCDay() === index && now.getUTCMonth() === state.month - 1;
+            now.getUTCDate() === index && now.getUTCMonth() === state.month - 1;
 
         cells.push(
             <CalendarCell
