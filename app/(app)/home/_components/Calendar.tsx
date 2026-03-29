@@ -1,127 +1,174 @@
-'use client'
+"use client";
 
-import Button from "@/app/_components/Button"
-import Spacer from "@/app/_components/Spacer"
-import { MONTHS } from "@/libs/months"
-import { ChevronLeft, ChevronRight, ChevronsUp } from "lucide-react"
-import { ReactNode } from "react"
-import CalendarProvider, { useCalendarContext } from "../context"
-import { CalendarMonthGrid } from "./CalendayMonthGrid"
-import CalendarYearGrid from "./CalendarYearGrid"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import Button from "@/app/_components/Button";
+import Spacer from "@/app/_components/Spacer";
+import { MONTHS } from "@/libs/months";
+import {
+    ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsDown,
+    ChevronsUp,
+} from "lucide-react";
+import { ReactNode } from "react";
+import CalendarProvider, { useCalendarContext } from "../context";
+import { CalendarMonthGrid } from "./CalendayMonthGrid";
+import CalendarYearGrid from "./CalendarYearGrid";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-const client = new QueryClient()
+const client = new QueryClient();
 
 export default function Calendar(): ReactNode {
     return (
         <QueryClientProvider client={client}>
             <CalendarProvider>
-                <section className="card bg-base-100 shadow-md w-full md:w-2xl h-96 md:h-128 overflow-hidden">
-                    <CalendarHeader/>
-                    <CalendarBody/>
+                <section className="w-full md:w-2xl overflow-hidden">
+                    <Header />
+                    <Body />
                 </section>
             </CalendarProvider>
         </QueryClientProvider>
-    )
+    );
 }
 
-function CalendarHeader(): ReactNode {
-    const { state, dispatch, data } = useCalendarContext()
-
-    const monthName = data?.birthdates[state.month].name || MONTHS[state.month - 1]
-    const prevMonth = state.month - 1 < 0 ? 11 : state.month - 1;
-    const nextMonth = state.month + 1 > 11 ? 0 : state.month + 1;
+function Header(): ReactNode {
+    const { state, dispatch, data } = useCalendarContext();
 
     const handleToPrevMonth = () => {
-        dispatch({ type: 'PREV_MONTH' })
-    }
+        dispatch({ type: "PREV_MONTH" });
+    };
 
     const handleToNextMonth = () => {
-        dispatch({ type: 'NEXT_MONTH' })
-    }
+        dispatch({ type: "NEXT_MONTH" });
+    };
 
     return (
-        <div className="flex items-center h-1/6 bg-primary text-primary-content overflow-hidden">
-            <CalendarUpButton/>
-
-            <div className={`flex flex-col px-2`}>
-                {/* Month and year */}
-                <h3 className="text-sm md:text-2xl w-[14ch] text-start font-extrabold">
-                    { state.viewType !== 'year' && monthName } { state.year }
-                </h3>
-
-                {/* Monthy birthday counter */}
-                <CalendarHeaderCounter/>
+        <header className="flex h-20 items-end mb-4">
+            <div className="flex flex-col grow">
+                <HeaderDate />
+                <HeaderCounter />
             </div>
 
-            <Spacer/>
+            <div className="flex flex-col h-full w-24 justify-between">
+                <CalendarUpButton />
 
-            <Button className={`h-full rounded-none! btn-outline border-0 ${state.viewType !== 'month' && "hidden"}`}
-                aria-label={`Move to ${MONTHS[prevMonth]}`}
-                onClick={handleToPrevMonth}>
-                <ChevronLeft/>
-            </Button>
+                {state.viewType === "year" ? null : (
+                    <div className="flex w-full justify-between">
+                        <Button
+                            className="px-2 btn-primary btn-soft btn-sm"
+                            onClick={handleToPrevMonth}
+                            aria-label="Move to previous month"
+                        >
+                            <ChevronLeft size={24} />
+                        </Button>
 
-            <Button className={`h-full rounded-none! btn-outline border-0 border-l ${state.viewType !== 'month' && "hidden"}`}
-                aria-label={`Move to ${MONTHS[nextMonth]}`}
-                onClick={handleToNextMonth}>
-                <ChevronRight/>
-            </Button>
-        </div>
-    )
+                        <Button
+                            className="px-2 btn-primary btn-soft btn-sm"
+                            onClick={handleToNextMonth}
+                            aria-label="Move to next month"
+                        >
+                            <ChevronRight size={24} />
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </header>
+    );
 }
 
 function CalendarUpButton(): ReactNode {
     const { state, dispatch } = useCalendarContext();
 
     const handleUpClick = () => {
-        console.log("asdad")
-        dispatch({ type: 'ZOOM_OUT_TO_YEAR'})
-    }
+        dispatch({ type: "ZOOM_OUT_TO_YEAR" });
+    };
+
+    const handleJumpToMonth = () => {
+        dispatch({ type: "JUMP_TO_MONTH", month: state.month });
+    };
 
     return (
-        <Button className={`h-full rounded-none! max-md:p-2 btn-outline border-0 border-r flex flex-col
-                ${state.viewType === 'year' && "invisible"}`}
-            aria-label="Return to year"
-            onClick={handleUpClick}>
-            <ChevronsUp/>
+        <Button
+            className={`btn-primary btn-soft btn-sm`}
+            onClick={
+                state.viewType === "month" ? handleUpClick : handleJumpToMonth
+            }
+        >
+            {state.viewType === "month" ? (
+                <>
+                    <ChevronsUp size={16} />
+                    Year
+                </>
+            ) : (
+                <>
+                    <ChevronsDown size={16} />
+                    Month
+                </>
+            )}
         </Button>
-    )
+    );
 }
 
-function CalendarHeaderCounter(): ReactNode {
-    const { state, data } = useCalendarContext()
-    const count = data?.total || 0
-    let message = ""
+function HeaderDate(): ReactNode {
+    const { state, data } = useCalendarContext();
 
-    if(state.viewType === 'year') {
-        message = `${count} people are having birthdays this year`
+    const monthName =
+        data?.birthdates[state.month].name || MONTHS[state.month - 1];
+
+    return (
+        <>
+            {state.viewType === "year" ? (
+                <h3 className="text-6xl w-[4ch] overflow-hidden text-start font-extrabold text-base-content">
+                    {state.year}{" "}
+                </h3>
+            ) : (
+                <h3 className="text-3xl md:text-6xl w-[9ch] md:w-[12ch] text-start font-extrabold text-base-content">
+                    <span
+                        className={`block h-full md:inline max-md:leading-6 text-base-content/50`}
+                    >
+                        {state.year}{" "}
+                    </span>
+                    <span>{monthName}</span>
+                </h3>
+            )}
+        </>
+    );
+}
+
+function HeaderCounter(): ReactNode {
+    const { state, data } = useCalendarContext();
+    const count = data?.total || 0;
+    let message = "";
+
+    if (count > 1) {
+        message = `${count} people have birthdays this `;
     }
 
-    if(state.viewType === 'month') {
-        message = `${count} are having birthdays this month`
+    if (count === 1) {
+        message = `1 person has a birthday this `;
+    }
+
+    if (count === 0) {
+        message = "No birthdays this";
     }
 
     return (
-        <span className="text-xs leading-4 text-primary-content">
-            { message }
-        </span>
-    )
+        <h4 className="text-xs text-secondary tracking-wide font-semibold overflow-hidden whitespace-nowrap">
+            {message + state.viewType}
+        </h4>
+    );
 }
 
-function CalendarBody(): ReactNode {
-    const { state } = useCalendarContext()
+function Body(): ReactNode {
+    const { state } = useCalendarContext();
 
-    switch(state.viewType) {
-        case 'year':
-            return (
-                <CalendarYearGrid/>
-            )
-
-        default:
-            return (
-                <CalendarMonthGrid/>
-            )
-    }
+    return (
+        <section className="bg-base-100/30 rounded-2xl p-4 h-120">
+            {state.viewType === "month" ? (
+                <CalendarMonthGrid />
+            ) : (
+                <CalendarYearGrid />
+            )}
+        </section>
+    );
 }
-
