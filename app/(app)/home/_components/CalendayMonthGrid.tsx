@@ -4,9 +4,12 @@ import { ReactNode } from "react";
 import { CalendarCell } from "./CalendarCell";
 import { useCalendarContext } from "../context";
 import { MONTHS } from "@/libs/months";
+import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
 
 export function CalendarMonthGrid(): ReactNode {
-    const { state, dispatch, data } = useCalendarContext();
+    const { state } = useCalendarContext();
+
+    const { data, error } = useCalendarBirthdays(state.month);
 
     // Use UTC-based date math to avoid server-client date mismatch
     const firstDay = new Date(

@@ -7,7 +7,6 @@ import {
     useContext,
     useReducer,
 } from "react";
-import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
 
 export const VIEW_TYPES = ["year", "month"] as const;
 export type ViewType = (typeof VIEW_TYPES)[number];
@@ -58,10 +57,6 @@ function reducer(
 type CalendarContextType = {
     state: CalendarUiState;
     dispatch: Dispatch<CalendarAction>;
-    data:
-        | { total: number; birthdates: Record<number, CalendarBirthdates> }
-        | undefined;
-    error: Error | null;
 } | null;
 
 export const CalendarContext = createContext<CalendarContextType>(null);
@@ -86,18 +81,11 @@ export default function CalendarProvider({
         year: new Date().getUTCFullYear(),
     });
 
-    const { data, error } =
-        state.viewType === "year"
-            ? useCalendarBirthdays()
-            : useCalendarBirthdays(state.month);
-
     return (
         <CalendarContext.Provider
             value={{
                 state: state,
                 dispatch: dispatch,
-                data: data,
-                error: error,
             }}
         >
             {children}

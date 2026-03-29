@@ -1,10 +1,15 @@
+"use client";
+
 import { MONTHS } from "@/libs/months";
 import { ReactNode } from "react";
 import { useCalendarContext } from "../context";
 import { CalendarCell } from "./CalendarCell";
+import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
 
 export default function CalendarYearGrid(): ReactNode {
-    const { state, dispatch, data } = useCalendarContext();
+    const { dispatch } = useCalendarContext();
+
+    const { data, error } = useCalendarBirthdays();
 
     const jumpToMonth = (month: number) => {
         dispatch({ type: "JUMP_TO_MONTH", month: month });

@@ -1,6 +1,13 @@
+"use client";
+
 import { CalendarBirthdates } from "@/app/(app)/home/context";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    useQuery,
+    useQueryClient,
+    useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useEffect } from "react";
+import { api } from "../api";
 
 export default function useCalendarBirthdays(month?: number) {
     const client = useQueryClient();
@@ -18,7 +25,7 @@ export default function useCalendarBirthdays(month?: number) {
                 birthdates: Record<number, CalendarBirthdates>;
             }> => {
                 const res = await fetch(
-                    `api/user/birthday/summary?month=${prevMonth}`,
+                    api(`/api/user/birthday/summary?month=${prevMonth}`),
                 );
                 const json = await res.json();
 
@@ -37,7 +44,7 @@ export default function useCalendarBirthdays(month?: number) {
                 birthdates: Record<number, CalendarBirthdates>;
             }> => {
                 const res = await fetch(
-                    `api/user/birthday/summary?month=${nextMonth}`,
+                    api(`/api/user/birthday/summary?month=${nextMonth}`),
                 );
                 const json = await res.json();
 
@@ -50,14 +57,16 @@ export default function useCalendarBirthdays(month?: number) {
         });
     }, [month]);
 
-    return useQuery({
-        queryKey: ["birthday", "count", month ?? new Date().getUTCFullYear()],
+    return useSuspenseQuery({
+        queryKey: ["birthdays", "count", month ?? new Date().getUTCFullYear()],
         queryFn: async (): Promise<{
             total: number;
             birthdates: Record<number, CalendarBirthdates>;
         }> => {
             const res = await fetch(
-                `api/user/birthday/summary${month ? `?month=${month}` : ""}`,
+                api(
+                    `/api/user/birthday/summary${month ? `?month=${month}` : ""}`,
+                ),
             );
             const json = await res.json();
 

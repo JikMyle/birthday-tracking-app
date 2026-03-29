@@ -8,11 +8,12 @@ import {
     ChevronsDown,
     ChevronsUp,
 } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import CalendarProvider, { useCalendarContext } from "../context";
 import { CalendarMonthGrid } from "./CalendayMonthGrid";
 import CalendarYearGrid from "./CalendarYearGrid";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
 
 const client = new QueryClient();
 
@@ -30,26 +31,104 @@ export default function Calendar(): ReactNode {
 }
 
 function Header(): ReactNode {
-    const { state, dispatch, data } = useCalendarContext();
+    const { state } = useCalendarContext();
 
     return (
         <header className="flex h-20 items-end mb-4">
-            <div className="flex flex-col grow">
-                <HeaderDate />
-                <HeaderCounter />
-            </div>
+            <Suspense fallback={<HeaderTextSkeleton />}>
+                <HeaderText />
+            </Suspense>
 
             <div className="flex flex-col h-full w-24 md:w-48 justify-between">
-                <CalendarUpButton />
+                <UpButton />
                 <ViewTypeToggle />
 
-                {state.viewType === "year" ? null : <CalendarNavigation />}
+                {state.viewType === "year" ? null : <Navigation />}
             </div>
         </header>
     );
 }
 
-function CalendarNavigation(): ReactNode {
+function HeaderTextSkeleton(): ReactNode {
+    return (
+        <div className="flex flex-col grow h-full">
+            <div className="h-14 md:w-md skeleton">A</div>
+            <div className="text-xs md:w-xs skeleton mt-1">A</div>
+        </div>
+    );
+}
+
+function HeaderText(): ReactNode {
+    const { state } = useCalendarContext();
+    const { data, error } =
+        state.viewType === "year"
+            ? useCalendarBirthdays()
+            : useCalendarBirthdays(state.month);
+
+    const count =
+        state.viewType === "year"
+            ? data.total
+            : data.birthdates[state.month].total;
+
+    return (
+        <div className="flex flex-col grow">
+            <HeaderDate
+                month={
+                    data.birthdates[state.month].name || MONTHS[state.month - 1]
+                }
+            />
+            <HeaderCounter count={count} />
+        </div>
+    );
+}
+
+function HeaderDate({ month }: { month: string }): ReactNode {
+    const { state } = useCalendarContext();
+
+    return (
+        <>
+            {state.viewType === "year" ? (
+                <h3 className="text-6xl w-[4ch] overflow-hidden text-start font-extrabold text-base-content">
+                    {state.year}{" "}
+                </h3>
+            ) : (
+                <h3 className="text-3xl md:text-6xl w-[9ch] md:w-[12ch] text-start font-extrabold text-base-content">
+                    <span
+                        className={`block h-full md:inline max-md:leading-6 text-base-content/50`}
+                    >
+                        {state.year}{" "}
+                    </span>
+                    <span>{month}</span>
+                </h3>
+            )}
+        </>
+    );
+}
+
+function HeaderCounter({ count }: { count: number }): ReactNode {
+    const { state } = useCalendarContext();
+    let message = "";
+
+    if (count > 1) {
+        message = `${count} people have birthdays this `;
+    }
+
+    if (count === 1) {
+        message = `1 person has a birthday this `;
+    }
+
+    if (count === 0) {
+        message = "No birthdays this";
+    }
+
+    return (
+        <h4 className="text-xs text-secondary tracking-wide font-semibold overflow-hidden whitespace-nowrap">
+            {message + state.viewType}
+        </h4>
+    );
+}
+
+function Navigation(): ReactNode {
     const { dispatch } = useCalendarContext();
 
     const handleToPrevMonth = () => {
@@ -95,7 +174,7 @@ function CalendarNavigation(): ReactNode {
     );
 }
 
-function CalendarUpButton(): ReactNode {
+function UpButton(): ReactNode {
     const { state, dispatch } = useCalendarContext();
 
     const handleUpClick = () => {
@@ -159,66 +238,44 @@ function ViewTypeToggle(): ReactNode {
     );
 }
 
-function HeaderDate(): ReactNode {
-    const { state, data } = useCalendarContext();
-
-    const monthName =
-        data?.birthdates[state.month].name || MONTHS[state.month - 1];
-
-    return (
-        <>
-            {state.viewType === "year" ? (
-                <h3 className="text-6xl w-[4ch] overflow-hidden text-start font-extrabold text-base-content">
-                    {state.year}{" "}
-                </h3>
-            ) : (
-                <h3 className="text-3xl md:text-6xl w-[9ch] md:w-[12ch] text-start font-extrabold text-base-content">
-                    <span
-                        className={`block h-full md:inline max-md:leading-6 text-base-content/50`}
-                    >
-                        {state.year}{" "}
-                    </span>
-                    <span>{monthName}</span>
-                </h3>
-            )}
-        </>
-    );
-}
-
-function HeaderCounter(): ReactNode {
-    const { state, data } = useCalendarContext();
-    const count = data?.total || 0;
-    let message = "";
-
-    if (count > 1) {
-        message = `${count} people have birthdays this `;
-    }
-
-    if (count === 1) {
-        message = `1 person has a birthday this `;
-    }
-
-    if (count === 0) {
-        message = "No birthdays this";
-    }
-
-    return (
-        <h4 className="text-xs text-secondary tracking-wide font-semibold overflow-hidden whitespace-nowrap">
-            {message + state.viewType}
-        </h4>
-    );
-}
-
 function Body(): ReactNode {
     const { state } = useCalendarContext();
 
     return (
         <section className="bg-base-100/30 rounded-2xl p-4 h-120">
             {state.viewType === "month" ? (
-                <CalendarMonthGrid />
+                <Suspense fallback={<BodyMonthGridSkeleton />}>
+                    <CalendarMonthGrid />
+                </Suspense>
             ) : (
-                <CalendarYearGrid />
+                <Suspense fallback={<BodyYearGridSkeleton />}>
+                    <CalendarYearGrid />
+                </Suspense>
             )}
         </section>
+    );
+}
+
+function BodyMonthGridSkeleton(): ReactNode {
+    return (
+        <div className="grid grid-cols-7 grid-rows-[2rem_repeat(5,1fr)] h-full items-center gap-2">
+            {Array.from({ length: 42 }).map((item, index) => (
+                <div className="flex p-2 h-full w-full" key={index}>
+                    <div className="skeleton grow"></div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function BodyYearGridSkeleton(): ReactNode {
+    return (
+        <div className="grid grid-cols-4 grid-rows-3 grow h-full items-center gap-2">
+            {Array.from({ length: 12 }).map((item, index) => (
+                <div className="flex p-2 h-full w-full" key={index}>
+                    <div className="skeleton grow"></div>
+                </div>
+            ))}
+        </div>
     );
 }
