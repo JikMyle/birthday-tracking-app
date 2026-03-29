@@ -9,7 +9,7 @@ export default function UserLayout({
         <div className="relative flex flex-col h-screen w-screen bg-base-100 font-sans overflow-hidden bg-linear-30 from-white to-primary-content">
             <TopBar></TopBar>
 
-            <main className="w-full h-full py-8 md:p-12 overflow-scroll">
+            <main className="w-full h-full py-2 md:p-12 overflow-scroll">
                 {children}
             </main>
         </div>
