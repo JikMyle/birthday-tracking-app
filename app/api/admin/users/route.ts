@@ -6,7 +6,7 @@ import {
     deleteUsers,
     getUsers,
     softDeleteUsers,
-} from "@/libs/dal/user";
+} from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 
 export async function GET(request: NextRequest) {

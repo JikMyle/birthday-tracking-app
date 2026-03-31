@@ -1,6 +1,6 @@
 import { validateIdList } from "@/libs/validation/validators/validateIdList";
 import { NextRequest, NextResponse } from "next/server";
-import { restoreUsers } from "@/libs/dal/user";
+import { restoreUsers } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 
 export async function PATCH(request: NextRequest): Promise<NextResponse> {

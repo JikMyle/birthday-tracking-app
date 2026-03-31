@@ -1,8 +1,11 @@
+import { Prisma } from "@/generated/prisma/client";
+import errorHandler from "@/libs/errorHandler";
+import { prisma } from "@/libs/db/prisma";
+import { MONTHS } from "@/libs/months";
 import { birthdaySearchSchema } from "@/libs/validation/schemas/dateSchema";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
-import { getBirthdays } from "@/libs/dal/birthday";
-import errorHandler from "@/libs/errorHandler";
+import { getBirthdaySummary } from "@/libs/dal/birthdays";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
     const searchParams = request.nextUrl.searchParams;
@@ -26,12 +29,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     try {
-        const birthdays = await getBirthdays(
+        const summary = await getBirthdaySummary(
             validated.data.month,
             validated.data.dayOfMonth,
         );
 
-        return NextResponse.json(birthdays, { status: 200 });
+        return NextResponse.json(summary, { status: 200 });
     } catch (error) {
         return await errorHandler(error);
     }

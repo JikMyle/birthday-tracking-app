@@ -1,5 +1,6 @@
 import { User } from "@/generated/prisma/client";
 import { prisma } from "../db/prisma";
+import { encryptPassword } from "../encryptPassword";
 
 export type PublicUser = Omit<User, "password">;
 export type UserSummary = Pick<
@@ -9,8 +10,13 @@ export type UserSummary = Pick<
 export type BatchPayload = { count: number };
 
 export async function createUser(user: User): Promise<UserSummary> {
+    const withHashedPassword = {
+        ...user,
+        password: await encryptPassword(user.password),
+    };
+
     return prisma.user.create({
-        data: user,
+        data: withHashedPassword,
         select: {
             id: true,
             username: true,

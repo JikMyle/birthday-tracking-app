@@ -1,7 +1,7 @@
 import errorHandler from "@/libs/errorHandler";
 import validateId from "@/libs/validation/validators/validateId";
 import validatePartialUser from "@/libs/validation/validators/validatePartialUser";
-import { getUserById, deleteUserById, updateUserById } from "@/libs/dal/user";
+import { getUserById, deleteUserById, updateUserById } from "@/libs/dal/users";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
@@ -10,7 +10,10 @@ interface Params {
     }>;
 }
 
-export async function GET({ params }: Params): Promise<NextResponse> {
+export async function GET(
+    req: NextRequest,
+    { params }: Params,
+): Promise<NextResponse> {
     const { id } = await params;
     const validated = validateId(id);
 
@@ -33,7 +36,7 @@ export async function GET({ params }: Params): Promise<NextResponse> {
 }
 
 export async function DELETE(
-    request: NextRequest,
+    req: NextRequest,
     { params }: Params,
 ): Promise<NextResponse> {
     const { id } = await params;
@@ -49,13 +52,13 @@ export async function DELETE(
     }
 }
 
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(req: NextRequest, { params }: Params) {
     const { id } = await params;
     const validatedId = validateId(id);
 
     if (!validatedId.valid) return validatedId.response;
 
-    const json = await request.json();
+    const json = await req.json();
     const validatedUserData = validatePartialUser(json);
 
     if (!validatedUserData.valid) return validatedUserData.response;

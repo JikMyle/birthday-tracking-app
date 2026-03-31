@@ -1,10 +1,7 @@
 "use client";
 
 import { CalendarBirthdates } from "@/app/(app)/home/context";
-import {
-    useQueryClient,
-    useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { api } from "../api";
 
@@ -24,7 +21,7 @@ export default function useCalendarBirthdays(month?: number) {
                 birthdates: Record<number, CalendarBirthdates>;
             }> => {
                 const res = await fetch(
-                    api(`/api/user/birthday/summary?month=${prevMonth}`),
+                    api(`/api/birthdays/summary?month=${prevMonth}`),
                 );
                 const json = await res.json();
 
@@ -43,7 +40,7 @@ export default function useCalendarBirthdays(month?: number) {
                 birthdates: Record<number, CalendarBirthdates>;
             }> => {
                 const res = await fetch(
-                    api(`/api/user/birthday/summary?month=${nextMonth}`),
+                    api(`/api/birthdays/summary?month=${nextMonth}`),
                 );
                 const json = await res.json();
 
@@ -63,9 +60,7 @@ export default function useCalendarBirthdays(month?: number) {
             birthdates: Record<number, CalendarBirthdates>;
         }> => {
             const res = await fetch(
-                api(
-                    `/api/user/birthday/summary${month ? `?month=${month}` : ""}`,
-                ),
+                api(`/api/birthdays/summary${month ? `?month=${month}` : ""}`),
             );
             const json = await res.json();
 
