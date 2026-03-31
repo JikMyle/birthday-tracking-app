@@ -1,32 +1,35 @@
 import errorHandler from "@/libs/errorHandler";
 import validateId from "@/libs/validation/validators/validateId";
-import { prisma } from "@/libs/db/prisma";
 import { NextResponse } from "next/server";
+import { softDeleteUserById } from "@/libs/dal/user";
 
 interface Params {
     params: Promise<{
-        id: number
-    }>
+        id: number;
+    }>;
 }
 
 export async function PATCH(
-    request: Request, 
-    { params }: Params
+    request: Request,
+    { params }: Params,
 ): Promise<NextResponse> {
     const { id } = await params;
     const validated = validateId(id);
 
-    if(!validated.valid) return validated.response;
+    if (!validated.valid) return validated.response;
 
     try {
-        await prisma.user.update({
-            where: { id: validated.value, deletedAt: null },
-            data: { updatedAt: new Date(), deletedAt: new Date() },
-            omit: { password: true }
-        })
+        const result = await softDeleteUserById(validated.value);
 
-        return new NextResponse(null, { status: 204 })
-    } catch(error) {
-        return await errorHandler(error)
+        if (result.count === 0) {
+            return NextResponse.json(
+                { message: "No user record found" },
+                { status: 404 },
+            );
+        }
+
+        return new NextResponse(null, { status: 204 });
+    } catch (error) {
+        return await errorHandler(error, "Failed to soft delete user");
     }
 }

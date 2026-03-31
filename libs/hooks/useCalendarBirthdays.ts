@@ -2,7 +2,6 @@
 
 import { CalendarBirthdates } from "@/app/(app)/home/context";
 import {
-    useQuery,
     useQueryClient,
     useSuspenseQuery,
 } from "@tanstack/react-query";

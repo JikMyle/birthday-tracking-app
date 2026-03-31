@@ -1,5 +1,5 @@
 import { EmailPreference, Role, User } from "@/generated/prisma/client";
-import createUsers from "@/libs/db/factories/createUsers";
+import generateFakeUsers from "@/libs/db/generateFakeUsers";
 import { prisma } from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 
@@ -11,7 +11,7 @@ async function seedUserTable() {
     try {
         await prisma.user.deleteMany({});
 
-        const users = createUsers(365);
+        const users = generateFakeUsers(365);
         const admin: User = {
             id: 0,
             username: "admin",
@@ -25,25 +25,33 @@ async function seedUserTable() {
             tokenExpiresAt: null,
             createdAt: new Date(),
             updatedAt: new Date(),
-            deletedAt: null
-        }
+            deletedAt: null,
+        };
 
         users.unshift(admin);
-        await prisma.user.createMany({ data: users, skipDuplicates: true })
-        
-        console.log(`✅ Successfully seeded Users Table with ${users.length} rows...`)
-    } catch(error) {
-        console.error('❌ An error occured while seeding Users Table...\n', error);
+        await prisma.user.createMany({ data: users, skipDuplicates: true });
+
+        console.log(
+            `✅ Successfully seeded Users Table with ${users.length} rows...`,
+        );
+    } catch (error) {
+        console.error(
+            "❌ An error occured while seeding Users Table...\n",
+            error,
+        );
     }
 }
 
-prisma.$connect()
-    .then(async () => {  await main() })
-    .then(async () => { 
+prisma
+    .$connect()
+    .then(async () => {
+        await main();
+    })
+    .then(async () => {
         await prisma.$disconnect();
         process.exit(0);
     })
     .catch(async () => {
         await prisma.$disconnect();
         process.exit(1);
-    })
+    });

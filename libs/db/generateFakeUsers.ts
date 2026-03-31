@@ -1,9 +1,11 @@
 import { EmailPreference, Role, User } from "@/generated/prisma/client";
-import { faker } from "@faker-js/faker"
+import { faker } from "@faker-js/faker";
 import bcrypt from "bcryptjs";
 
-export default function createUsers(num: number): User[] {
-    return Array.from({length: num}, () => { return createUser() })
+export default function generateFakeUsers(num: number): User[] {
+    return Array.from({ length: num }, () => {
+        return createUser();
+    });
 }
 
 function createUser(): User {
@@ -13,12 +15,15 @@ function createUser(): User {
     const hashedPassword = bcrypt.hashSync(plainPassword, 10);
 
     const createdAtDate = faker.date.past();
-    const updatedOrDeletedAtDate = faker.date.between({from: createdAtDate, to: new Date()});
-    
+    const updatedOrDeletedAtDate = faker.date.between({
+        from: createdAtDate,
+        to: new Date(),
+    });
+
     return {
         id: 0,
-        username: faker.internet.username({firstName: firstName}),
-        email: faker.internet.email({firstName: firstName}),
+        username: faker.internet.username({ firstName: firstName }),
+        email: faker.internet.email({ firstName: firstName }),
         password: hashedPassword,
         birthdate: faker.date.birthdate(),
         role: Role.USER,
@@ -28,6 +33,10 @@ function createUser(): User {
         tokenExpiresAt: null,
         createdAt: faker.date.anytime(),
         updatedAt: updatedOrDeletedAtDate,
-        deletedAt: faker.helpers.arrayElement([updatedOrDeletedAtDate, null, null])
-    }
+        deletedAt: faker.helpers.arrayElement([
+            updatedOrDeletedAtDate,
+            null,
+            null,
+        ]),
+    };
 }
