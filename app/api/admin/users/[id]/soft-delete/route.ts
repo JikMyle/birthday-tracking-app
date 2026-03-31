@@ -30,6 +30,6 @@ export async function PATCH(
 
         return new NextResponse(null, { status: 204 });
     } catch (error) {
-        return await errorHandler(error, "Failed to soft delete user");
+        return await errorHandler(error);
     }
 }

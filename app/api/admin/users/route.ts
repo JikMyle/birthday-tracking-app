@@ -1,12 +1,7 @@
 import { validateIdList } from "@/libs/validation/validators/validateIdList";
 import validateNewUser from "@/libs/validation/validators/validateNewUser";
 import { NextRequest, NextResponse } from "next/server";
-import {
-    createUser,
-    deleteUsers,
-    getUsers,
-    softDeleteUsers,
-} from "@/libs/dal/users";
+import { createUser, deleteUsers, getUsers } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 
 export async function GET(request: NextRequest) {
@@ -31,7 +26,7 @@ export async function GET(request: NextRequest) {
         const users = await getUsers(keyword, deleted, page, pageSize);
         return NextResponse.json(users, { status: 200 });
     } catch (error) {
-        return await errorHandler(error, "Failed to retrieve users");
+        return await errorHandler(error);
     }
 }
 
@@ -63,22 +58,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 }
 
-export async function PATCH(request: NextRequest): Promise<NextResponse> {
-    const body = await request.json();
-    const validatedIds = validateIdList(body.ids);
-
-    if (!validatedIds.valid) {
-        return validatedIds.response;
-    }
-
-    try {
-        const result = await softDeleteUsers(validatedIds.data);
-        return NextResponse.json(result, { status: 200 });
-    } catch (error) {
-        return await errorHandler(error, "Failed to delete users");
-    }
-}
-
 export async function DELETE(request: NextRequest): Promise<NextResponse> {
     const body = await request.json();
     const validatedIds = validateIdList(body.ids);
@@ -91,6 +70,6 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
         const result = await deleteUsers(validatedIds.data);
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
-        return await errorHandler(error, "Failed to delete users");
+        return await errorHandler(error);
     }
 }

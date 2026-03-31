@@ -27,6 +27,6 @@ export async function PATCH({ params }: Params): Promise<NextResponse> {
 
         return new NextResponse(null, { status: 204 });
     } catch (error) {
-        return await errorHandler(error, "Failed to restore user");
+        return await errorHandler(error);
     }
 }

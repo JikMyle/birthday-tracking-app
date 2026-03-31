@@ -31,7 +31,7 @@ export async function GET(
 
         return NextResponse.json(user, { status: 200 });
     } catch (error) {
-        return await errorHandler(error, "Failed to fetch user");
+        return await errorHandler(error);
     }
 }
 
@@ -48,7 +48,7 @@ export async function DELETE(
         await deleteUserById(validated.value);
         return new NextResponse(null, { status: 204 });
     } catch (error) {
-        return await errorHandler(error, "Failed to delete user");
+        return await errorHandler(error);
     }
 }
 

@@ -16,7 +16,6 @@ export async function proxy(req: NextRequest) {
         await updateSession();
 
         if (req.nextUrl.pathname.startsWith("/api/admin")) {
-            console.log(session.role !== Role.ADMIN);
             if (session.role !== Role.ADMIN) {
                 return NextResponse.json(
                     {

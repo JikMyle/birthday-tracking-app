@@ -29,6 +29,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         return NextResponse.json(user, { status: 201 });
     } catch (error) {
-        return await errorHandler(error, "Failed to create user");
+        return await errorHandler(error);
     }
 }

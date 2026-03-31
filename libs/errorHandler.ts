@@ -6,7 +6,7 @@ import {
 import { NextResponse } from "next/server";
 
 // NOTE: Improve error handling with specific messages for error cases
-export default async function errorHandler(error: unknown, message?: string) {
+export default async function errorHandler(error: unknown) {
     let response: NextResponse = NextResponse.json(
         {
             message: "Internal server error",
