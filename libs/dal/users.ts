@@ -66,14 +66,20 @@ export async function deleteUserById(id: number): Promise<void> {
 export async function updateUserById(
     id: number,
     data: UpdateUserInfo,
-): Promise<PublicUser> {
+): Promise<UserSummary> {
     return prisma.user.update({
         where: { id, deletedAt: null },
         data: {
             ...data,
             updatedAt: new Date(),
         },
-        omit: { password: true },
+        select: {
+            id: true,
+            username: true,
+            email: true,
+            birthdate: true,
+            emailPreference: true,
+        },
     });
 }
 

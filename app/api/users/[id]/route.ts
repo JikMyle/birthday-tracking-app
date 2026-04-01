@@ -1,5 +1,10 @@
+import { Role } from "@/generated/prisma/enums";
 import { verifySession } from "@/libs/dal/session";
-import { deleteUserById, getUserById, updateUserById } from "@/libs/dal/users";
+import {
+    getUserById,
+    softDeleteUserById,
+    updateUserById,
+} from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 import validateId from "@/libs/validation/validators/validateId";
 import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
@@ -65,7 +70,7 @@ export async function DELETE(
     if (!validated.valid) return validated.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== id) {
+    if (session.isAuth && session.id !== validated.value) {
         return NextResponse.json(
             {
                 message: "Access not authorized, insufficient privileges",
@@ -75,7 +80,7 @@ export async function DELETE(
     }
 
     try {
-        await deleteUserById(validated.value);
+        await softDeleteUserById(validated.value);
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return await errorHandler(error);
@@ -89,7 +94,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!validatedId.valid) return validatedId.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== id) {
+    if (session.isAuth && session.id !== validatedId.value) {
         return NextResponse.json(
             {
                 message: "Access not authorized, insufficient privileges",
@@ -99,15 +104,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     }
 
     const json = await req.json();
-    const validatedUserData = validateUserInfo(json);
+    const validatedUserInfo = validateUserInfo(json);
 
-    if (!validatedUserData.valid) return validatedUserData.response;
+    if (!validatedUserInfo.valid) return validatedUserInfo.response;
 
     try {
-        const result = await updateUserById(
-            validatedId.value,
-            validatedUserData.data,
-        );
+        const result = await updateUserById(validatedId.value, {
+            ...validatedUserInfo.data,
+            role: Role.USER,
+        });
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
         return await errorHandler(error);
