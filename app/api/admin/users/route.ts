@@ -41,16 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     try {
-        const user = await createUser({
-            ...validated.data,
-            id: 0,
-            emailVerified: false,
-            verificationToken: null,
-            tokenExpiresAt: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deletedAt: null,
-        });
+        const user = await createUser(validated.data);
 
         return NextResponse.json(user, { status: 201 });
     } catch (error) {
