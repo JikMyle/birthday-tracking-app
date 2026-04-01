@@ -78,15 +78,16 @@ export async function deleteSession() {
     cookieStore.delete("session");
 }
 
-export const verifySession = cache(async function (): Promise<
+export type SessionAuth =
     | {
           isAuth: true;
           id?: number;
           username?: string;
           role?: Role;
       }
-    | { isAuth: false }
-> {
+    | { isAuth: false };
+
+export const verifySession = cache(async function (): Promise<SessionAuth> {
     const cookie = (await cookies()).get("session")?.value;
     const session = await decryptSession(cookie);
 
