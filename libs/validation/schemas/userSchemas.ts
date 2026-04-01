@@ -49,12 +49,10 @@ export const newUserSchema = z.object({
 
 export type NewUser = z.infer<typeof newUserSchema>;
 
-export const partialUserSchema = z
+export const updateUserInfoSchema = z
     .object({
         username: usernameSchema.optional(),
-        email: emailSchema.optional(),
         birthdate: birthdateSchema.optional(),
-        password: passwordSchema.optional(),
         role: roleSchema.optional(),
         emailPreference: emailPreferenceSchema.optional(),
     })
@@ -63,6 +61,4 @@ export const partialUserSchema = z
         { message: "No fields provided", path: ["user"] },
     );
 
-export type PartialUser = z.infer<typeof partialUserSchema>;
-
-// Other User properties are not necessary here
+export type UpdateUserInfo = z.infer<typeof updateUserInfoSchema>;

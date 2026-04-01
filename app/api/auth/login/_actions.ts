@@ -1,7 +1,7 @@
 import {
     emailSchema,
     passwordSchema,
-} from "@/libs/validation/schemas/userSchema";
+} from "@/libs/validation/schemas/userSchemas";
 import { NextResponse } from "next/server";
 import z from "zod";
 

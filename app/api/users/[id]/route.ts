@@ -2,7 +2,7 @@ import { verifySession } from "@/libs/dal/session";
 import { deleteUserById, getUserById, updateUserById } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 import validateId from "@/libs/validation/validators/validateId";
-import validatePartialUser from "@/libs/validation/validators/validatePartialUser";
+import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
@@ -99,7 +99,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     }
 
     const json = await req.json();
-    const validatedUserData = validatePartialUser(json);
+    const validatedUserData = validateUserInfo(json);
 
     if (!validatedUserData.valid) return validatedUserData.response;
 

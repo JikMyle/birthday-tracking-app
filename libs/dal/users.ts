@@ -1,6 +1,7 @@
 import { User } from "@/generated/prisma/client";
 import { prisma } from "../db/prisma";
 import { encryptPassword } from "../encryptPassword";
+import { NewUser, UpdateUserInfo } from "../validation/schemas/userSchemas";
 
 export type PublicUser = Omit<User, "password">;
 export type UserSummary = Pick<
@@ -9,7 +10,7 @@ export type UserSummary = Pick<
 >;
 export type BatchPayload = { count: number };
 
-export async function createUser(user: User): Promise<UserSummary> {
+export async function createUser(user: NewUser): Promise<UserSummary> {
     const withHashedPassword = {
         ...user,
         password: await encryptPassword(user.password),
@@ -64,7 +65,7 @@ export async function deleteUserById(id: number): Promise<void> {
 
 export async function updateUserById(
     id: number,
-    data: Partial<User>,
+    data: UpdateUserInfo,
 ): Promise<PublicUser> {
     return prisma.user.update({
         where: { id, deletedAt: null },
