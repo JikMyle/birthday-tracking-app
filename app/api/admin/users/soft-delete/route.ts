@@ -15,6 +15,6 @@ export async function PATCH(request: NextRequest): Promise<NextResponse> {
         const result = await softDeleteUsers(validatedIds.data);
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
-        return await errorHandler(error, "Failed to delete users");
+        return await errorHandler(error);
     }
 }
