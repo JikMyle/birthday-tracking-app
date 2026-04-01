@@ -260,7 +260,7 @@ function BodyMonthGridSkeleton(): ReactNode {
     return (
         <div className="grid grid-cols-7 grid-rows-[2rem_repeat(5,1fr)] h-full items-center gap-2">
             {Array.from({ length: 42 }).map((item, index) => (
-                <div className="flex p-2 h-full w-full" key={index}>
+                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
                     <div className="skeleton grow"></div>
                 </div>
             ))}
@@ -272,7 +272,7 @@ function BodyYearGridSkeleton(): ReactNode {
     return (
         <div className="grid grid-cols-4 grid-rows-3 grow h-full items-center gap-2">
             {Array.from({ length: 12 }).map((item, index) => (
-                <div className="flex p-2 h-full w-full" key={index}>
+                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
                     <div className="skeleton grow"></div>
                 </div>
             ))}
