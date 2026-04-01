@@ -29,8 +29,6 @@ function createUser(): User {
         role: Role.USER,
         emailPreference: faker.helpers.enumValue(EmailPreference),
         emailVerified: faker.datatype.boolean(),
-        verificationToken: null,
-        tokenExpiresAt: null,
         createdAt: faker.date.anytime(),
         updatedAt: updatedOrDeletedAtDate,
         deletedAt: faker.helpers.arrayElement([

@@ -21,8 +21,6 @@ async function seedUserTable() {
             role: Role.ADMIN,
             emailPreference: EmailPreference.NONE,
             emailVerified: true,
-            verificationToken: null,
-            tokenExpiresAt: null,
             createdAt: new Date(),
             updatedAt: new Date(),
             deletedAt: null,
