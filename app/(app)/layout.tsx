@@ -6,12 +6,11 @@ export default function UserLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="relative flex flex-col h-screen w-full bg-base-100 font-sans overflow-hidden bg-linear-30 from-white to-primary-content">
+        <>
             <TopBar></TopBar>
-
-            <main className="w-full h-full py-2 md:p-12 overflow-scroll">
+            <main className="relative flex flex-col md:p-12 min-h-screen w-full bg-base-100 font-sans bg-linear-30 from-white to-primary-content">
                 {children}
             </main>
-        </div>
+        </>
     );
 }

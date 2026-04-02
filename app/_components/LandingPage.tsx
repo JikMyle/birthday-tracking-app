@@ -5,8 +5,8 @@ import { ReactNode } from "react";
 
 export default function LandingPage() {
     return (
-        <section className="flex flex-col items-center w-full min-h-screen font-sans overflow-auto text-base-content p-8 bg-linear-30 from-white to-primary-content">
-            <h1 className="mt-16 text-4xl md:text-6xl font-black text-center">
+        <section className="flex flex-col items-center w-full min-h-screen max-md:px-4 py-16 font-sans text-base-content bg-linear-30 from-white to-primary-content">
+            <h1 className="text-4xl md:text-6xl font-black text-center">
                 How big is
                 <br className="md:hidden" /> today's{" "}
                 <br className="md:hidden" />
