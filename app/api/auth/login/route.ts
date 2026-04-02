@@ -3,6 +3,7 @@ import { validateLoginCredentials } from "../../../../libs/validation/validators
 import { prisma } from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/libs/dal/session";
+import errorHandler from "@/libs/errorHandler";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -44,11 +45,6 @@ export async function POST(req: NextRequest) {
             { status: 200 },
         );
     } catch (err) {
-        return NextResponse.json(
-            {
-                message: "Invalid email or password",
-            },
-            { status: 400 },
-        );
+        return errorHandler(err);
     }
 }
