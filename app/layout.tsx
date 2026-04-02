@@ -26,10 +26,9 @@ export default function RootLayout({
     return (
         <html lang="en" data-theme="light">
             <body
-                className={`${plusJakarta.variable} ${robotoMono.variable} antialiased`}
+                className={`${plusJakarta.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen`}
             >
                 {children}
-
                 <Footer />
             </body>
         </html>
