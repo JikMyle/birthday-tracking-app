@@ -6,18 +6,19 @@ import { ReactNode } from "react";
 export default function LandingPage() {
     return (
         <section className="flex flex-col items-center w-full min-h-screen font-sans overflow-auto text-base-content p-8 bg-linear-30 from-white to-primary-content">
-            <h1 className="mt-16 text-4xl font-black text-center md:text-left">
+            <h1 className="mt-16 text-4xl md:text-6xl font-black text-center">
                 How big is
-                <br /> today's <br />
+                <br className="md:hidden" /> today's{" "}
+                <br className="md:hidden" />
                 <span className="text-primary">birthday&nbsp;bash?</span>
             </h1>
 
-            <h2 className="mt-6 text-lg text-base-content/50 text-center md:text-left">
+            <h2 className="mt-6 text-lg md:max-w-xl text-base-content/50 text-center">
                 BdBashboard lets you take a look at how many people are
                 celebrating their birthdays across the year, all in one place.
             </h2>
 
-            <h2 className="my-6 text-lg text-base-content/50 text-center md:text-left">
+            <h2 className="my-6 text-lg text-base-content/50 text-center">
                 Sign up now to join the party!
             </h2>
 
@@ -29,9 +30,9 @@ export default function LandingPage() {
                 Explore the Calendar
             </Link>
 
-            <section className="flex flex-col w-full mt-24 mb-16 gap-8">
-                <div className="flex flex-col items-center gap-4">
-                    <h3 className="text-3xl w-min text-center font-bold">
+            <section className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] w-full md:max-w-6xl mt-24 mb-16 gap-8">
+                <div className="flex flex-col col-span-full items-center gap-4">
+                    <h3 className="text-3xl w-min md:w-max text-center font-bold">
                         Crafted for Celebration
                     </h3>
                     <h4 className="text-center text-base-content/50">
@@ -85,7 +86,7 @@ export default function LandingPage() {
                         />
                     }
                     title="Complete anonymity"
-                    description="Too shy to show the world. Don't worry! Celebrants are kept secret, you'll just know that someone, somewhere, is celebrating."
+                    description="Too shy to show the world. Don't worry! Celebrants are kept secret, you'll just know that someone, somewhere, is having a blast."
                 />
             </section>
 
