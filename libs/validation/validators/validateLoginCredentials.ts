@@ -1,14 +1,5 @@
-import {
-    emailSchema,
-    passwordSchema,
-} from "@/libs/validation/schemas/userSchemas";
+import { loginCredentialsSchema } from "@/libs/validation/schemas/authSchemas";
 import { NextResponse } from "next/server";
-import z from "zod";
-
-const loginSchema = z.object({
-    email: emailSchema,
-    password: passwordSchema,
-});
 
 export function validateLoginCredentials(
     email: unknown,
@@ -16,7 +7,10 @@ export function validateLoginCredentials(
 ):
     | { valid: true; data: { email: string; password: string } }
     | { valid: false; response: NextResponse } {
-    const result = loginSchema.safeParse({ email: email, password: password });
+    const result = loginCredentialsSchema.safeParse({
+        email: email,
+        password: password,
+    });
 
     if (!result.success) {
         return {

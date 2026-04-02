@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateLoginCredentials } from "./_actions";
+import { validateLoginCredentials } from "../../../../libs/validation/validators/validateLoginCredentials";
 import { prisma } from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/libs/dal/session";
