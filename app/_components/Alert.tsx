@@ -16,10 +16,32 @@ interface AlertProps {
 }
 
 export default function Alert({ className, type, style, text }: AlertProps) {
+    const typeClass =
+        type === "success"
+            ? "alert-success"
+            : type === "error"
+              ? "alert-error"
+              : type === "warning"
+                ? "alert-warning"
+                : type === "info"
+                  ? "alert-info"
+                  : "";
+
+    const styleClass =
+        style === "dash"
+            ? "alert-dash"
+            : style === "outline"
+              ? "alert-outline"
+              : style === "soft"
+                ? "alert-soft"
+                : "";
+
     return (
         <div
             role="alert"
-            className={`alert ${type && `alert-${type}`} ${style && `alert-${style}`} ${className ?? ""}`}
+            className={["alert", typeClass, styleClass, className]
+                .filter(Boolean)
+                .join(" ")}
         >
             {getAlertIcon(type)}
             <span>{text}</span>
