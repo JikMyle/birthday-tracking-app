@@ -14,7 +14,7 @@ export default function LandingPage() {
             </h1>
 
             <h2 className="mt-6 text-lg md:max-w-xl text-base-content/50 text-center">
-                BdBashboard lets you take a look at how many people are
+                BDBashboard lets you take a look at how many people are
                 celebrating their birthdays across the year, all in one place.
             </h2>
 
