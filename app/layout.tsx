@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import "./globals.css";
+import { Footer } from "./_components/Footer";
 
 const plusJakarta = Plus_Jakarta_Sans({
     variable: "--font-plus-jakarta",
@@ -28,6 +29,8 @@ export default function RootLayout({
                 className={`${plusJakarta.variable} ${robotoMono.variable} antialiased`}
             >
                 {children}
+
+                <Footer />
             </body>
         </html>
     );
