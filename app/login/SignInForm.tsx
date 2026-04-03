@@ -41,7 +41,7 @@ export function SignInForm() {
                 />
             ) : null}
 
-            <InputLabelContainer label="Email Address">
+            <InputLabelContainer label="Email Address" htmlFor="email">
                 <TextInput
                     id="email"
                     name="email"
@@ -53,7 +53,7 @@ export function SignInForm() {
                 />
             </InputLabelContainer>
 
-            <InputLabelContainer label="Password">
+            <InputLabelContainer label="Password" htmlFor="password">
                 <PasswordInput
                     id="password"
                     name="password"
