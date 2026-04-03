@@ -1,6 +1,5 @@
 "use client";
-import { PartyPopperIcon } from "lucide-react";
-import { ReactNode, useActionState, useEffect } from "react";
+import { useActionState, useEffect } from "react";
 import Button from "../_components/Button";
 import Link from "next/link";
 import Alert from "../_components/Alert";
@@ -9,6 +8,7 @@ import { TextInput } from "../_components/form/TextInput";
 import { InputLabelContainer } from "../_components/form/InputLabelContainer";
 import { PasswordInput } from "../_components/form/PasswordInput";
 import { useRouter } from "next/navigation";
+import FormWithHeaderContainer from "../_components/form/FormWithHeaderContainer";
 
 export interface FormState {
     errors: Record<string, string> | null;
@@ -29,17 +29,7 @@ export function SignInForm() {
     }, [state]);
 
     return (
-        <section className="w-full mx-auto flex flex-col items-center gap-8">
-            <header className="flex flex-col items-center gap-2">
-                <Icon className="bg-primary text-white">
-                    <PartyPopperIcon size={32} />
-                </Icon>
-
-                <h3 className="text-2xl text-primary font-bold mx-auto">
-                    Sign in to BDBashboard
-                </h3>
-            </header>
-
+        <FormWithHeaderContainer className="mx-auto">
             <form
                 action={formAction}
                 className="flex flex-col w-full md:w-sm px-8 md:py-8 md:bg-base-100 rounded-xl md:shadow-md overflow-hidden"
@@ -111,19 +101,6 @@ export function SignInForm() {
                     )}
                 </Button>
             </form>
-        </section>
-    );
-}
-
-interface IconProps {
-    className?: string;
-    children: ReactNode;
-}
-
-function Icon({ className, children }: IconProps) {
-    return (
-        <div className={`p-2 rounded-full w-fit ${className ?? ""}`}>
-            {children}
-        </div>
+        </FormWithHeaderContainer>
     );
 }
