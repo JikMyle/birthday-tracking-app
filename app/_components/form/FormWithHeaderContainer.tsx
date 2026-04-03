@@ -6,7 +6,7 @@ export default function FormWithHeaderContainer({
     className,
     children,
 }: {
-    className: string;
+    className?: string;
     children: ReactNode;
 }): ReactNode {
     return (
