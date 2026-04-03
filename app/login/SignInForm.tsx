@@ -8,7 +8,7 @@ import { TextInput } from "../_components/form/TextInput";
 import { InputLabelContainer } from "../_components/form/InputLabelContainer";
 import { PasswordInput } from "../_components/form/PasswordInput";
 import { useRouter } from "next/navigation";
-import FormWithHeaderContainer from "../_components/form/FormWithHeaderContainer";
+import { FormCardContainer } from "../_components/form/FormCardContainer";
 
 export interface FormState {
     errors: Record<string, string> | null;
@@ -29,78 +29,73 @@ export function SignInForm() {
     }, [state]);
 
     return (
-        <FormWithHeaderContainer className="mx-auto">
-            <form
-                action={formAction}
-                className="flex flex-col w-full md:w-sm px-8 md:py-8 md:bg-base-100 rounded-xl md:shadow-md overflow-hidden"
-            >
-                {state.success || state.errors ? (
-                    <Alert
-                        className="grow mb-4"
-                        type={
-                            state.success
-                                ? "success"
-                                : state.errors
-                                  ? "error"
-                                  : undefined
-                        }
-                        style="soft"
-                        text={state.success ?? state.errors?.form ?? ""}
-                    />
-                ) : null}
+        <FormCardContainer
+            className="w-full md:w-sm max-md:py-0"
+            action={formAction}
+        >
+            {state.success || state.errors ? (
+                <Alert
+                    className="grow mb-4"
+                    type={
+                        state.success
+                            ? "success"
+                            : state.errors
+                              ? "error"
+                              : undefined
+                    }
+                    style="soft"
+                    text={state.success ?? state.errors?.form ?? ""}
+                />
+            ) : null}
 
-                <InputLabelContainer label="Email Address">
-                    <TextInput
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="Enter email address"
-                        autoComplete="email"
-                        minLength={1}
-                        required={true}
-                    />
-                </InputLabelContainer>
+            <InputLabelContainer label="Email Address">
+                <TextInput
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter email address"
+                    autoComplete="email"
+                    minLength={1}
+                    required={true}
+                />
+            </InputLabelContainer>
 
-                <InputLabelContainer label="Password">
-                    <PasswordInput
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="Enter password"
-                        minLength={6}
-                        required={true}
-                    />
-                </InputLabelContainer>
+            <InputLabelContainer label="Password">
+                <PasswordInput
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Enter password"
+                    minLength={6}
+                    required={true}
+                />
+            </InputLabelContainer>
 
-                <div className="flex justify-between text-xs mb-4 mt-10">
-                    <Link
-                        className="link link-primary link-hover"
-                        href={"/signup"}
-                    >
-                        Don't have an account?
-                    </Link>
+            <div className="flex justify-between text-xs mb-4 mt-10">
+                <Link className="link link-primary link-hover" href={"/signup"}>
+                    Don't have an account?
+                </Link>
 
-                    <Link
-                        className="link link-primary link-hover"
-                        href={"/forgot-password"}
-                    >
-                        Forgot password?
-                    </Link>
-                </div>
-
-                <Button
-                    className="btn-primary"
-                    type="submit"
-                    disabled={pending}
-                    aria-disabled={pending}
+                <Link
+                    className="link link-primary link-hover"
+                    href={"/forgot-password"}
                 >
-                    {pending ? (
-                        <span className="loading loading-spinner"></span>
-                    ) : (
-                        "Sign In"
-                    )}
-                </Button>
-            </form>
-        </FormWithHeaderContainer>
+                    Forgot password?
+                </Link>
+            </div>
+
+            <Button
+                className="btn-primary"
+                type="submit"
+                disabled={pending}
+                aria-disabled={pending}
+            >
+                {pending ? (
+                    <span className="loading loading-spinner"></span>
+                ) : (
+                    "Sign In"
+                )}
+            </Button>
+        </FormCardContainer>
     );
 }
