@@ -10,18 +10,11 @@ import { PasswordInput } from "../_components/form/PasswordInput";
 import { useRouter } from "next/navigation";
 import { FormCardContainer } from "../_components/form/FormCardContainer";
 
-export interface FormState {
-    errors: Record<string, string> | null;
-    success: string | null;
-}
-
-const initialState: FormState = {
-    errors: null,
-    success: null,
-};
-
 export function SignInForm() {
-    const [state, formAction, pending] = useActionState(login, initialState);
+    const [state, formAction, pending] = useActionState(login, {
+        errors: null,
+        success: null,
+    });
     const router = useRouter();
 
     useEffect(() => {

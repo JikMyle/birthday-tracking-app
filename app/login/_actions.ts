@@ -1,4 +1,4 @@
-import { FormState } from "./SignInForm";
+import { FormState } from "@/libs/types";
 import { loginCredentialsSchema } from "../../libs/validation/schemas/authSchemas";
 import { api } from "@/libs/api";
 
