@@ -30,7 +30,7 @@ export function SignInForm() {
 
     return (
         <FormCardContainer
-            className="w-full md:w-sm max-md:py-0"
+            className="w-full max-md:bg-transparent max-md:shadow-none md:w-sm max-md:py-0"
             action={formAction}
         >
             {state.success || state.errors ? (

@@ -9,7 +9,7 @@ export function FormCardContainer({
     return (
         <form
             action={action}
-            className={`flex flex-col p-8 md:bg-base-100 rounded-xl overflow-hidden ${className ?? ""}`}
+            className={`flex flex-col p-8 bg-base-100 shadow-md rounded-xl overflow-hidden ${className ?? ""}`}
         >
             {children}
         </form>
