@@ -12,21 +12,16 @@ import { ReactNode, Suspense } from "react";
 import CalendarProvider, { useCalendarContext } from "../context";
 import { CalendarMonthGrid } from "./CalendayMonthGrid";
 import CalendarYearGrid from "./CalendarYearGrid";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
-
-const client = new QueryClient();
 
 export default function Calendar(): ReactNode {
     return (
-        <QueryClientProvider client={client}>
-            <CalendarProvider>
-                <section className="w-full md:w-3xl overflow-hidden">
-                    <Header />
-                    <Body />
-                </section>
-            </CalendarProvider>
-        </QueryClientProvider>
+        <CalendarProvider>
+            <section className="w-full md:w-3xl overflow-hidden">
+                <Header />
+                <Body />
+            </section>
+        </CalendarProvider>
     );
 }
 

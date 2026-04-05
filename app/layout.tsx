@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer } from "./_components/Footer";
+import { ReactQueryClientProvider } from "./_components/ReactQueryClientProvider";
 
 const plusJakarta = Plus_Jakarta_Sans({
     variable: "--font-plus-jakarta",
@@ -24,13 +25,15 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" data-theme="light">
-            <body
-                className={`${plusJakarta.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen`}
-            >
-                {children}
-                <Footer />
-            </body>
-        </html>
+        <ReactQueryClientProvider>
+            <html lang="en" data-theme="light">
+                <body
+                    className={`${plusJakarta.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen`}
+                >
+                    {children}
+                    <Footer />
+                </body>
+            </html>
+        </ReactQueryClientProvider>
     );
 }
