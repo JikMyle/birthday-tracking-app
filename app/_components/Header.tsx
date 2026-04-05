@@ -1,32 +1,109 @@
-import Spacer from "./Spacer";
+"use client";
+import { LogOutIcon } from "lucide-react";
+import { AppIcon } from "./AppIcon";
+import { DefaultAvatar } from "./DefaultAvatar";
+import Link from "next/link";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { api } from "@/libs/api";
+import { useRouter } from "next/navigation";
 
-export function TopBar(): React.ReactNode {
+export function TopBar({ username }: { username: string }): React.ReactNode {
     return (
-        <header className="flex items-center w-full h-16 p-4 gap-4 shadow-md bg-white text-primary">
-            <TopBarTitle></TopBarTitle>
-            <Spacer></Spacer>
-            <TopBarGreeting></TopBarGreeting>
-            <Avatar src="/"></Avatar>
+        <header className="font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-base-100 text-primary">
+            <Title className="mr-auto"></Title>
+            <Greeting username={username}></Greeting>
+            <Avatar src=""></Avatar>
         </header>
     );
 }
-function TopBarTitle(): React.ReactNode {
-    return <span className="text-3xl font-black">BDBashboard</span>;
-}
-function TopBarGreeting(): React.ReactNode {
+
+function Title({ className }: { className?: string }): React.ReactNode {
     return (
-        <div className="max-sm:hidden flex flex-col items-end text-primary-content max-w-[25ch]">
-            <span className="leading-4 font-light">Hello,</span>
-            <span className="leading-4 truncate font-bold">Your username</span>
+        <div
+            className={`flex items-center gap-2 text-primary ${className ?? ""}`}
+        >
+            <AppIcon className="hidden md:flex" />
+            <Link href={"/"} className="text-2xl md:text-3xl font-black">
+                BDBashboard
+            </Link>
         </div>
     );
 }
-function Avatar({ src }: { src: string }): React.ReactNode {
+function Greeting({
+    className,
+    username,
+}: {
+    className?: string;
+    username: string;
+}): React.ReactNode {
     return (
-        <img
-            className="h-12 w-12 rounded-full bg-primary-content object-cover text-primary text-xs"
-            src={src}
-            alt="Avatar"
-        />
+        <div
+            className={`max-sm:hidden flex flex-col items-end leading-4 max-w-[25ch] ${className ?? ""}`}
+        >
+            <span className="font-light text-base-content">Welcome,</span>
+            <span className="truncate font-bold text-primary">{username}</span>
+        </div>
+    );
+}
+
+function Avatar({ src }: { src: string }): React.ReactNode {
+    const router = useRouter();
+    const mutation = useMutation({
+        mutationKey: ["logout"],
+        mutationFn: async () => {
+            const response = await fetch(api("/api/auth/signout"), {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to sign out. Please try again.");
+            }
+
+            router.push("/login");
+            return "Successfully signed out. Redirecting to login.";
+        },
+    });
+
+    const handleOnLogout = function (e: React.MouseEvent<HTMLAnchorElement>) {
+        e.preventDefault();
+        mutation.mutate();
+    };
+
+    return (
+        <>
+            <button
+                popoverTarget="avatar-dropdown"
+                className="avatar active:scale-95 cursor-pointer"
+                style={{ anchorName: "--avatar-dropdown-anchor" }}
+            >
+                {src ? (
+                    <img
+                        className="w-10 h-10 p-2 rounded-full object-cover bg-primary-content text-primary text-xs"
+                        src={src}
+                        alt="Avatar"
+                    />
+                ) : (
+                    <DefaultAvatar className="stroke-none w-10 p-2 rounded-full bg-primary-content text-primary" />
+                )}
+            </button>
+            <nav>
+                <ul
+                    className="dropdown menu min-w-48 mt-2 rounded-box bg-base-100 shadow-sm"
+                    popover="auto"
+                    id="avatar-dropdown"
+                    style={{ positionAnchor: "--avatar-dropdown-anchor" }}
+                >
+                    <li>
+                        <a
+                            className="text-base-content"
+                            href=""
+                            onClick={handleOnLogout}
+                        >
+                            <LogOutIcon size={16} /> Sign out
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </>
     );
 }
