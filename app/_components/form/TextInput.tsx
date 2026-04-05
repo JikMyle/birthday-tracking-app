@@ -15,9 +15,13 @@ export function TextInput({
         <>
             <input
                 {...props}
-                className={`input ${hasValidation && "validator"} ${className ?? ""}`}
+                className={`input text-base-content ${hasValidation && "validator"} ${className ?? ""}`}
             />
-            {error ? <div className="validator-hint">{error}</div> : null}
+            {error ? (
+                <div className="validator-hint text-error visible!">
+                    {error}
+                </div>
+            ) : null}
         </>
     );
 }
