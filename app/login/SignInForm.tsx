@@ -12,6 +12,7 @@ import { FormCardContainer } from "../_components/form/FormCardContainer";
 
 export function SignInForm() {
     const [state, formAction, pending] = useActionState(login, {
+        formData: null,
         errors: null,
         success: null,
     });

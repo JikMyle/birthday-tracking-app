@@ -14,6 +14,7 @@ export async function login(
 
     if (!validated.success) {
         return {
+            ...state,
             errors: {
                 form: "Invalid email or password",
             },
@@ -34,6 +35,7 @@ export async function login(
 
         if (!response.ok) {
             return {
+                ...state,
                 errors: {
                     form: json.message ?? "Failed to login",
                 },
@@ -42,11 +44,13 @@ export async function login(
         }
 
         return {
+            ...state,
             errors: null,
             success: json.message,
         };
     } catch (err) {
         return {
+            ...state,
             errors: {
                 form: "An error occured. Please try again later",
             },
