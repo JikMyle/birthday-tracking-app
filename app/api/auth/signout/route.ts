@@ -1,14 +1,14 @@
 import { deleteSession, verifySession } from "@/libs/dal/session";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST() {
     deleteSession();
     const session = verifySession();
 
     if ((await session).isAuth) {
         return NextResponse.json(
             {
-                message: "Failed to logout",
+                message: "Failed to sign out",
             },
             { status: 500 },
         );
@@ -16,7 +16,7 @@ export async function GET() {
 
     return NextResponse.json(
         {
-            message: "Successfully logged out",
+            message: "Successfully signed out",
         },
         { status: 200 },
     );
