@@ -8,6 +8,7 @@ import errorHandler from "@/libs/errorHandler";
 import { validateId } from "../../_actions";
 import { validateUpdateUserInfoInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
+import { UserSummary } from "@/libs/types";
 
 interface Params {
     params: Promise<{
@@ -51,7 +52,7 @@ export async function GET(
                 email: user.email,
                 birthdate: user.birthdate,
                 emailPreference: user.emailPreference,
-            },
+            } as UserSummary,
             { status: 200 },
         );
     } catch (error) {
