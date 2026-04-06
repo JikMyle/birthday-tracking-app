@@ -8,35 +8,60 @@ export const idSchema = z.coerce
     .positive({ error: "ID must be greater than zero" });
 
 export const usernameSchema = z
-    .string({ error: "Username must be a string" })
-    .min(2, { message: "Username must be at least 2 characters" })
-    .max(25, { message: "Username must be at most 25 characters" });
+    .string()
+    .min(2, "Username must be at least 2 characters")
+    .max(25, "Username must be at most 25 characters")
+    .regex(
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores",
+    );
 
-export const emailSchema = z.email({ message: "Invalid email address" });
+export const emailSchema = z.email("Invalid email address");
 
 export const birthdateSchema = z.preprocess(
-    (value) => {
-        if (value === null) return undefined;
-        return value;
+    (value, ctx) => {
+        if (value instanceof Date) return value;
+
+        if (typeof value !== "string") {
+            ctx.addIssue({
+                code: "invalid_type",
+                expected: "string",
+                received:
+                    typeof value === "object"
+                        ? value === null
+                            ? "null"
+                            : Array.isArray(value)
+                              ? "array"
+                              : "object"
+                        : typeof value,
+                message:
+                    'Invalid date format, expected ISO 8601 (e.g. "1990-06-15")',
+            });
+            return z.NEVER;
+        }
+
+        return new Date(value);
     },
     z.coerce
-        .date({ error: "Invalid date" })
-        .max(new Date(), { message: "Birthdate cannot be in the future" })
-        .min(new Date("1900-01-01"), {
-            message: "Birthdate must be on or after 1900-01-01",
-        }),
+        .date('Invalid date format, expected ISO 8601 (e.g. "1990-06-15")')
+        .max(new Date(), "Birthdate cannot be in the future")
+        .min(
+            new Date("1900-01-01"),
+            "Birthdate must be on or after 1900-01-01",
+        ),
 );
 
 export const passwordSchema = z
-    .string({ error: "Password must be a string" })
-    .min(8, { message: "Password must be at least 8 characters" })
-    .max(64, { message: "Password must be at most 64 characters" });
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(64, "Password must be at most 64 characters");
 
-export const roleSchema = z.enum(Role, { error: "Role must be a valid value" });
+export const roleSchema = z.enum(Role, "Invalid role");
 
-export const emailPreferenceSchema = z.enum(EmailPreference, {
-    error: "Email preference must be a valid value",
-});
+export const emailPreferenceSchema = z.enum(
+    EmailPreference,
+    "Invalid email preference",
+);
 
 export const newUserSchema = z.object({
     username: usernameSchema,
