@@ -1,6 +1,6 @@
 import errorHandler from "@/libs/errorHandler";
 import { validateId } from "@/app/api/_actions";
-import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
+import { validateUpdateUserInfoInput } from "@/app/api/_actions";
 import { getUserById, deleteUserById, updateUserById } from "@/libs/dal/users";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -59,7 +59,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!validatedId.valid) return validatedId.response;
 
     const json = await req.json();
-    const validatedUserData = validateUserInfo(json);
+    const validatedUserData = validateUpdateUserInfoInput(json);
 
     if (!validatedUserData.valid) return validatedUserData.response;
 

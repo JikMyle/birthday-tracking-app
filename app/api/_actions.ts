@@ -2,6 +2,8 @@ import {
     CreateUserInput,
     createUserSchema,
     idSchema,
+    UpdateUserInfoInput,
+    updateUserInfoSchema,
 } from "@/libs/validation/schemas";
 import z from "@/node_modules/zod/v4/classic/external.cjs";
 import { NextResponse } from "next/server";
@@ -75,4 +77,27 @@ export function validateIdList(
         valid: true,
         data: result.data,
     };
+}
+
+export function validateUpdateUserInfoInput(
+    userData: unknown,
+):
+    | { valid: true; data: UpdateUserInfoInput }
+    | { valid: false; response: NextResponse } {
+    const result = updateUserInfoSchema.safeParse(userData);
+
+    if (!result.success) {
+        return {
+            valid: false,
+            response: NextResponse.json(
+                {
+                    message: "Invalid user data",
+                    errors: z.flattenError(result.error).fieldErrors,
+                },
+                { status: 400 },
+            ),
+        };
+    }
+
+    return { valid: true, data: result.data };
 }

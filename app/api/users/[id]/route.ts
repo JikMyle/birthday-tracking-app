@@ -7,7 +7,7 @@ import {
 } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
 import { validateId } from "../../_actions";
-import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
+import { validateUpdateUserInfoInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
@@ -104,7 +104,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     }
 
     const json = await req.json();
-    const validatedUserInfo = validateUserInfo(json);
+    const validatedUserInfo = validateUpdateUserInfoInput(json);
 
     if (!validatedUserInfo.valid) return validatedUserInfo.response;
 
