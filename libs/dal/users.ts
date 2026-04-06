@@ -1,16 +1,11 @@
-import { User } from "@/generated/prisma/client";
 import { prisma } from "../db/prisma";
 import { encryptPassword } from "../encryptPassword";
 import {
     CreateUserInput,
     UpdateUserInfoInput,
 } from "../validation/userSchemas";
+import { PublicUser, UserSummary } from "../types";
 
-export type PublicUser = Omit<User, "password">;
-export type UserSummary = Pick<
-    User,
-    "id" | "username" | "email" | "birthdate" | "emailPreference"
->;
 export type BatchPayload = { count: number };
 
 export async function createUser(user: CreateUserInput): Promise<UserSummary> {
