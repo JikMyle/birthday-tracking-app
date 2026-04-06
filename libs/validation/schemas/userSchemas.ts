@@ -2,10 +2,33 @@ import { EmailPreference, Role } from "@/generated/prisma/enums";
 
 import z from "zod";
 
-export const idSchema = z.coerce
-    .number({ error: "ID must be a number" })
-    .int({ error: "ID must be an integer" })
-    .positive({ error: "ID must be greater than zero" });
+// Schema only accepts numbers or parsable strings, anything else throws an invalid type error
+export const idSchema = z.preprocess(
+    (value, ctx) => {
+        if (value instanceof Number) return value;
+
+        if (typeof value !== "string") {
+            ctx.addIssue({
+                code: "invalid_type",
+                expected: "string",
+                received:
+                    typeof value === "object"
+                        ? value === null
+                            ? "null"
+                            : Array.isArray(value)
+                              ? "array"
+                              : "object"
+                        : typeof value,
+                message: "ID must be a number",
+            });
+            return z.NEVER;
+        }
+    },
+    z.coerce
+        .number({ error: "ID must be a number" })
+        .int({ error: "ID must be an integer" })
+        .positive({ error: "ID must be greater than zero" }),
+);
 
 export const usernameSchema = z
     .string()
