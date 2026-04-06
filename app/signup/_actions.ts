@@ -1,7 +1,10 @@
 import { EmailPreference } from "@/generated/prisma/enums";
 import { api } from "@/libs/api";
 import { FormState } from "@/libs/types";
-import { SignUpInput, signUpSchema } from "@/libs/validation/authSchemas";
+import {
+    CreateUserInput,
+    createUserSchema,
+} from "@/libs/validation/userSchemas";
 import z from "zod";
 
 export async function signUpUser(state: FormState, formData: FormData) {
@@ -12,7 +15,7 @@ export async function signUpUser(state: FormState, formData: FormData) {
 
     console.log(`Received sign up form data: ${JSON.stringify(payload)}`);
 
-    const validated = signUpSchema.safeParse(payload);
+    const validated = createUserSchema.safeParse(payload);
     if (!validated.success) {
         const errors = z.flattenError(validated.error).fieldErrors;
 
@@ -33,7 +36,7 @@ export async function signUpUser(state: FormState, formData: FormData) {
     const response = await fetch(api("/api/auth/signup"), {
         headers: { "Content-Type": "application/json" },
         method: "POST",
-        body: JSON.stringify(validated.data as SignUpInput),
+        body: JSON.stringify(validated.data as CreateUserInput),
     });
 
     const body = await response.json();

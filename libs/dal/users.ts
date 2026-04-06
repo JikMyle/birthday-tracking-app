@@ -9,7 +9,7 @@ import { PublicUser, UserSummary } from "../types";
 export type BatchPayload = { count: number };
 
 export async function createUser(user: CreateUserInput): Promise<UserSummary> {
-    const withHashedPassword = {
+    const { confirmPassword, ...withHashedPassword } = {
         ...user,
         password: await encryptPassword(user.password),
     };

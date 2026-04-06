@@ -1,5 +1,4 @@
 import { EmailPreference, Role } from "@/generated/prisma/enums";
-
 import z from "zod";
 
 // Schema only accepts numbers or parsable strings, anything else throws an invalid type error
@@ -90,14 +89,6 @@ export const emailPreferenceSchema = z.enum(
     "Invalid email preference",
 );
 
-export const createUserSchema = z.object({
-    username: usernameSchema,
-    email: emailSchema,
-    birthdate: birthdateSchema,
-    password: passwordSchema,
-    emailPreference: emailPreferenceSchema,
-});
-
 export const updateUserInfoSchema = z
     .object({
         username: usernameSchema.optional(),
@@ -108,6 +99,22 @@ export const updateUserInfoSchema = z
         (data) => Object.values(data).some((value) => value !== undefined),
         { message: "No fields provided", path: [] },
     );
+
+export const createUserSchema = z
+    .object({
+        username: usernameSchema,
+        email: emailSchema,
+        birthdate: birthdateSchema,
+        password: passwordSchema,
+        confirmPassword: z
+            .string()
+            .min(1, "Confirm password must not be empty"),
+        emailPreference: emailPreferenceSchema,
+    })
+    .refine(({ password, confirmPassword }) => password === confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInfoInput = z.infer<typeof updateUserInfoSchema>;
