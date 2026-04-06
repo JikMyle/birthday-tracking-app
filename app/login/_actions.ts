@@ -1,5 +1,5 @@
 import { FormState } from "@/libs/types";
-import { loginCredentialsSchema } from "../../libs/validation/schemas/authSchemas";
+import { signInSchema } from "../../libs/validation/schemas/authSchemas";
 import { api } from "@/libs/api";
 
 export async function login(
@@ -10,7 +10,7 @@ export async function login(
         email: formData.get("email"),
         password: formData.get("password"),
     };
-    const validated = await loginCredentialsSchema.safeParseAsync(credentials);
+    const validated = await signInSchema.safeParseAsync(credentials);
 
     if (!validated.success) {
         return {

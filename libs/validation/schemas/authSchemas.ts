@@ -7,9 +7,9 @@ import {
 } from "@/libs/validation/schemas/userSchemas";
 import z from "@/node_modules/zod/v4/classic/external.cjs";
 
-export const loginCredentialsSchema = z.object({
+export const signInSchema = z.object({
     email: emailSchema,
-    password: passwordSchema,
+    password: z.string().min(1, "Password must not be empty"),
 });
 
 export const signUpSchema = z
@@ -19,8 +19,8 @@ export const signUpSchema = z
         birthdate: birthdateSchema,
         password: passwordSchema,
         confirmPassword: z
-            .string("Confirm password must be a string")
-            .nonempty("Confirm password must not be empty"),
+            .string()
+            .min(1, "Confirm password must not be empty"),
         emailPreference: emailPreferenceSchema,
     })
     .refine(({ password, confirmPassword }) => password === confirmPassword, {
@@ -28,4 +28,5 @@ export const signUpSchema = z
         path: ["confirmPassword"],
     });
 
-export type SignUpPayload = z.infer<typeof signUpSchema>;
+export type SignInInput = z.infer<typeof signInSchema>;
+export type SignUpInput = z.infer<typeof signUpSchema>;

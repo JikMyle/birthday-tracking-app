@@ -2,7 +2,7 @@ import { EmailPreference } from "@/generated/prisma/enums";
 import { api } from "@/libs/api";
 import { FormState } from "@/libs/types";
 import {
-    SignUpPayload,
+    SignUpInput,
     signUpSchema,
 } from "@/libs/validation/schemas/authSchemas";
 import z from "zod";
@@ -36,7 +36,7 @@ export async function signUpUser(state: FormState, formData: FormData) {
     const response = await fetch(api("/api/auth/signup"), {
         headers: { "Content-Type": "application/json" },
         method: "POST",
-        body: JSON.stringify(validated.data as SignUpPayload),
+        body: JSON.stringify(validated.data as SignUpInput),
     });
 
     const body = await response.json();

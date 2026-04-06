@@ -1,4 +1,4 @@
-import { loginCredentialsSchema } from "@/libs/validation/schemas/authSchemas";
+import { signInSchema } from "@/libs/validation/schemas/authSchemas";
 import { NextResponse } from "next/server";
 
 export function validateLoginCredentials(
@@ -7,7 +7,7 @@ export function validateLoginCredentials(
 ):
     | { valid: true; data: { email: string; password: string } }
     | { valid: false; response: NextResponse } {
-    const result = loginCredentialsSchema.safeParse({
+    const result = signInSchema.safeParse({
         email: email,
         password: password,
     });
