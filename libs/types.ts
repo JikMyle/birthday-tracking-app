@@ -11,3 +11,16 @@ export type UserSummary = Pick<
 >;
 
 export type PublicUser = Omit<User, "password">;
+
+export type UserBirthday = { id: number; birthdate: Date };
+
+export type MonthlyBirthdaySummary = {
+    name: string;
+    total: number;
+    days: Record<number, number>;
+};
+
+export type BirthdaySummary = {
+    total: number;
+    birthdates: Record<number, MonthlyBirthdaySummary>;
+};

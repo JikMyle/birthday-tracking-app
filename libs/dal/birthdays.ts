@@ -1,17 +1,11 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "../db/prisma";
 import { MONTHS } from "../months";
-
-export type UserBirthday = { id: number; birthdate: Date };
-export type MonthlyBirthdaySummary = {
-    name: string;
-    total: number;
-    days: Record<number, number>;
-};
-export type BirthdaySummary = {
-    total: number;
-    birthdates: Record<number, MonthlyBirthdaySummary>;
-};
+import {
+    BirthdaySummary,
+    MonthlyBirthdaySummary,
+    UserBirthday,
+} from "../types";
 
 export async function getBirthdays(
     month?: number,
