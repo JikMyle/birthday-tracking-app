@@ -4,7 +4,7 @@ import { encryptPassword } from "../encryptPassword";
 import {
     CreateUserInput,
     UpdateUserInfoInput,
-} from "../validation/schemas/userSchemas";
+} from "../validation/userSchemas";
 
 export type PublicUser = Omit<User, "password">;
 export type UserSummary = Pick<

@@ -1,5 +1,5 @@
 import { FormState } from "@/libs/types";
-import { signInSchema } from "../../libs/validation/schemas/authSchemas";
+import { signInSchema } from "../../libs/validation/authSchemas";
 import { api } from "@/libs/api";
 
 export async function login(

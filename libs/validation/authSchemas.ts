@@ -4,7 +4,7 @@ import {
     emailSchema,
     passwordSchema,
     usernameSchema,
-} from "@/libs/validation/schemas/userSchemas";
+} from "@/libs/validation/userSchemas";
 import z from "@/node_modules/zod/v4/classic/external.cjs";
 
 export const signInSchema = z.object({

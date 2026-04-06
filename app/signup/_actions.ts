@@ -1,10 +1,7 @@
 import { EmailPreference } from "@/generated/prisma/enums";
 import { api } from "@/libs/api";
 import { FormState } from "@/libs/types";
-import {
-    SignUpInput,
-    signUpSchema,
-} from "@/libs/validation/schemas/authSchemas";
+import { SignUpInput, signUpSchema } from "@/libs/validation/authSchemas";
 import z from "zod";
 
 export async function signUpUser(state: FormState, formData: FormData) {

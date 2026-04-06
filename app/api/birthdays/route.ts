@@ -1,4 +1,4 @@
-import { birthdaySearchSchema } from "@/libs/validation/schemas/dateSchema";
+import { birthdaySearchSchema } from "@/libs/validation/dateSchema";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { getBirthdays } from "@/libs/dal/birthdays";

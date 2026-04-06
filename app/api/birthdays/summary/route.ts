@@ -2,7 +2,7 @@ import { Prisma } from "@/generated/prisma/client";
 import errorHandler from "@/libs/errorHandler";
 import { prisma } from "@/libs/db/prisma";
 import { MONTHS } from "@/libs/months";
-import { birthdaySearchSchema } from "@/libs/validation/schemas/dateSchema";
+import { birthdaySearchSchema } from "@/libs/validation/dateSchema";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { getBirthdaySummary } from "@/libs/dal/birthdays";

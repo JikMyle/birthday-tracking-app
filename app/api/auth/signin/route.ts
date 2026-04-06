@@ -3,7 +3,7 @@ import { prisma } from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/libs/dal/session";
 import errorHandler from "@/libs/errorHandler";
-import { SignInInput, signInSchema } from "@/libs/validation/schemas";
+import { SignInInput, signInSchema } from "@/libs/validation";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();

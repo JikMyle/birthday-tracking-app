@@ -4,7 +4,7 @@ import {
     idSchema,
     UpdateUserInfoInput,
     updateUserInfoSchema,
-} from "@/libs/validation/schemas";
+} from "@/libs/validation";
 import z from "@/node_modules/zod/v4/classic/external.cjs";
 import { NextResponse } from "next/server";
 
