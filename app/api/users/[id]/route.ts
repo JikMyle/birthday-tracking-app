@@ -6,7 +6,7 @@ import {
     updateUserById,
 } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
-import validateId from "@/libs/validation/validators/validateId";
+import { validateId } from "../../_actions";
 import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -26,7 +26,7 @@ export async function GET(
     if (!validated.valid) return validated.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validated.value) {
+    if (session.isAuth && session.id !== validated.data) {
         return NextResponse.json(
             {
                 message: "Access not authorized, insufficient privileges",
@@ -36,7 +36,7 @@ export async function GET(
     }
 
     try {
-        const user = await getUserById(validated.value);
+        const user = await getUserById(validated.data);
 
         if (!user) {
             return NextResponse.json(
@@ -70,7 +70,7 @@ export async function DELETE(
     if (!validated.valid) return validated.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validated.value) {
+    if (session.isAuth && session.id !== validated.data) {
         return NextResponse.json(
             {
                 message: "Access not authorized, insufficient privileges",
@@ -80,7 +80,7 @@ export async function DELETE(
     }
 
     try {
-        await softDeleteUserById(validated.value);
+        await softDeleteUserById(validated.data);
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return await errorHandler(error);
@@ -94,7 +94,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!validatedId.valid) return validatedId.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validatedId.value) {
+    if (session.isAuth && session.id !== validatedId.data) {
         return NextResponse.json(
             {
                 message: "Access not authorized, insufficient privileges",
@@ -109,7 +109,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     if (!validatedUserInfo.valid) return validatedUserInfo.response;
 
     try {
-        const result = await updateUserById(validatedId.value, {
+        const result = await updateUserById(validatedId.data, {
             ...validatedUserInfo.data,
             role: Role.USER,
         });

@@ -1,5 +1,5 @@
 import errorHandler from "@/libs/errorHandler";
-import validateId from "@/libs/validation/validators/validateId";
+import { validateId } from "@/app/api/_actions";
 import { NextResponse } from "next/server";
 import { restoreUserById } from "@/libs/dal/users";
 
@@ -16,7 +16,7 @@ export async function PATCH({ params }: Params): Promise<NextResponse> {
     if (!validated.valid) return validated.response;
 
     try {
-        const result = await restoreUserById(validated.value);
+        const result = await restoreUserById(validated.data);
 
         if (result.count === 0) {
             return NextResponse.json(

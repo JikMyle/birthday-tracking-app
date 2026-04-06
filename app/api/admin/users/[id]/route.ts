@@ -1,5 +1,5 @@
 import errorHandler from "@/libs/errorHandler";
-import validateId from "@/libs/validation/validators/validateId";
+import { validateId } from "@/app/api/_actions";
 import validateUserInfo from "@/libs/validation/validators/validateUserInfo";
 import { getUserById, deleteUserById, updateUserById } from "@/libs/dal/users";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,7 +20,7 @@ export async function GET(
     if (!validated.valid) return validated.response;
 
     try {
-        const user = await getUserById(validated.value);
+        const user = await getUserById(validated.data);
 
         if (!user) {
             return NextResponse.json(
@@ -45,7 +45,7 @@ export async function DELETE(
     if (!validated.valid) return validated.response;
 
     try {
-        await deleteUserById(validated.value);
+        await deleteUserById(validated.data);
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return await errorHandler(error);
@@ -65,7 +65,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     try {
         const result = await updateUserById(
-            validatedId.value,
+            validatedId.data,
             validatedUserData.data,
         );
         return NextResponse.json(result, { status: 200 });

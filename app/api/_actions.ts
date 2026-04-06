@@ -1,4 +1,8 @@
-import { CreateUserInput, createUserSchema } from "@/libs/validation/schemas";
+import {
+    CreateUserInput,
+    createUserSchema,
+    idSchema,
+} from "@/libs/validation/schemas";
 import z from "@/node_modules/zod/v4/classic/external.cjs";
 import { NextResponse } from "next/server";
 
@@ -15,6 +19,27 @@ export function validateSignUpInput(
             response: NextResponse.json(
                 {
                     message: "Invalid user data",
+                    errors: z.flattenError(result.error).fieldErrors,
+                },
+                { status: 400 },
+            ),
+        };
+    }
+
+    return { valid: true, data: result.data };
+}
+
+export function validateId(
+    id: unknown,
+): { valid: false; response: NextResponse } | { valid: true; data: number } {
+    const result = idSchema.safeParse(id);
+
+    if (!result.success) {
+        return {
+            valid: false,
+            response: NextResponse.json(
+                {
+                    message: "Invalid user ID",
                     errors: z.flattenError(result.error).fieldErrors,
                 },
                 { status: 400 },
