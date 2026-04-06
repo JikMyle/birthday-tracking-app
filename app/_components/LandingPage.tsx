@@ -1,28 +1,43 @@
 "use client";
-import { CalendarDays, CalendarSync, HatGlasses, Tally5 } from "lucide-react";
+import {
+    CalendarDays,
+    CalendarSync,
+    HatGlasses,
+    MenuIcon,
+    Tally5,
+    XIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { AppIcon } from "./AppIcon";
+import { IconContainer } from "./IconContainer";
 
 export default function LandingPage() {
     return (
         <>
-            <nav className="font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-white text-primary">
-                <div className="flex items-center">
-                    <AppIcon />
+            <header className="sticky top-0 z-10 font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-white text-primary">
+                <div className="flex items-center mr-auto">
+                    <AppIcon className="hidden md:flex" />
                     <Link className="text-3xl font-black" href={"/home"}>
                         BDBashboard
                     </Link>
                 </div>
 
-                <Link className="link link-hover ml-auto" href={"/login"}>
-                    Login
-                </Link>
-                <Link className="btn btn-primary" href={"/signup"}>
-                    Get Started
-                </Link>
-            </nav>
-            <section className="flex flex-col items-center w-full min-h-screen max-md:px-4 py-16 font-sans text-base-content bg-linear-30 from-white to-primary-content">
+                <HeaderMobileNavMenu />
+                <nav className="hidden md:flex gap-4 items-center">
+                    {/* <Link className="link link-hover" href={"/about"}>
+                        About
+                    </Link> */}
+                    <Link className="link link-hover" href={"/login"}>
+                        Sign In
+                    </Link>
+                    <Link className="btn btn-primary" href={"/signup"}>
+                        Get Started
+                    </Link>
+                </nav>
+            </header>
+
+            <section className="flex flex-col items-center w-full min-h-screen px-4 py-16 font-sans text-base-content bg-linear-30 from-white to-primary-content">
                 <h1 className="text-4xl md:text-6xl font-black text-center">
                     How big is
                     <br className="md:hidden" /> today's{" "}
@@ -48,7 +63,7 @@ export default function LandingPage() {
                     Explore the Calendar
                 </Link>
 
-                <section className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] w-full md:max-w-6xl mt-24 mb-16 gap-8">
+                <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] w-full md:max-w-6xl mt-24 mb-16 gap-8">
                     <div className="flex flex-col col-span-full items-center gap-4">
                         <h3 className="text-3xl w-min md:w-max text-center font-bold">
                             Crafted for Celebration
@@ -62,10 +77,9 @@ export default function LandingPage() {
                     <Card
                         key={"Calendar-centric focus"}
                         icon={
-                            <CardIcon
-                                className="bg-primary-content text-primary"
-                                icon={<CalendarDays />}
-                            />
+                            <IconContainer className="bg-primary-content text-primary">
+                                <CalendarDays />
+                            </IconContainer>
                         }
                         title="Calendar-centric focus"
                         description="A simple and intuitive calendar interface that visualizes everyone's key moments across months and seasons"
@@ -74,10 +88,9 @@ export default function LandingPage() {
                     <Card
                         key={"Numeric birthday counts"}
                         icon={
-                            <CardIcon
-                                className="bg-secondary-content text-secondary"
-                                icon={<Tally5 />}
-                            />
+                            <IconContainer className="bg-secondary-content text-secondary">
+                                <Tally5 />
+                            </IconContainer>
                         }
                         title="Numeric birthday counts"
                         description="Instantly see days with active celebrations with our badge indicators."
@@ -86,10 +99,9 @@ export default function LandingPage() {
                     <Card
                         key={"Month/Year toggling"}
                         icon={
-                            <CardIcon
-                                className="bg-primary-content text-primary"
-                                icon={<CalendarSync />}
-                            />
+                            <IconContainer className="bg-primary-content text-primary">
+                                <CalendarSync />
+                            </IconContainer>
                         }
                         title="Month/Year toggling"
                         description="Seamless glide from daily to montly. Toggle between granular daily birthdays and birds-eye monthly celebrations with one click."
@@ -98,10 +110,9 @@ export default function LandingPage() {
                     <Card
                         key={"Complete anonymity"}
                         icon={
-                            <CardIcon
-                                className="bg-secondary-content text-secondary"
-                                icon={<HatGlasses />}
-                            />
+                            <IconContainer className="bg-secondary-content text-secondary">
+                                <HatGlasses />
+                            </IconContainer>
                         }
                         title="Complete anonymity"
                         description="Too shy to show the world. Don't worry! Celebrants are kept secret, you'll just know that someone, somewhere, is having a blast."
@@ -138,13 +149,62 @@ function Card({ icon, title, description: body }: CardProps) {
     );
 }
 
-interface CardIconProps {
-    className: string;
-    icon: ReactNode;
-}
+function HeaderMobileNavMenu(): ReactNode {
+    const [isCollapsed, setIsCollapsed] = useState(true);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-function CardIcon({ className, icon }: CardIconProps) {
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node)
+            ) {
+                setIsCollapsed(true);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     return (
-        <div className={`p-3 mb-2 rounded-full w-fit ${className}`}>{icon}</div>
+        <nav className="flex items-center md:hidden" ref={dropdownRef}>
+            <button
+                popoverTarget="header-nav-dropdown"
+                className="md:hidden text-primary active:scale-95 active:rotate-45 transition-transform"
+                aria-label="Show navigation menu"
+                style={{ anchorName: "--header-nav-dropdown-anchor" }}
+                onClick={() => {
+                    setIsCollapsed(!isCollapsed);
+                }}
+            >
+                {isCollapsed ? <MenuIcon size={32} /> : <XIcon size={32} />}
+            </button>
+
+            <ul
+                className="dropdown menu w-screen mt-2 md:rounded-box bg-base-100 shadow-md text-xl font-bold"
+                popover="auto"
+                id="header-nav-dropdown"
+                style={{ positionAnchor: "--header-nav-dropdown-anchor" }}
+            >
+                <li>
+                    <Link className="text-base-content" href={"/login"}>
+                        Sign In
+                    </Link>
+                </li>
+                <li>
+                    <Link className="text-base-content" href={"/signup"}>
+                        Get Started
+                    </Link>
+                </li>
+
+                {/* <li>
+                        <Link className="text-base-content" href={"/about"}>
+                            About
+                        </Link>
+                    </li> */}
+            </ul>
+        </nav>
     );
 }
