@@ -1,4 +1,4 @@
-import { validateIdList } from "@/libs/validation/validators/validateIdList";
+import { validateIdList } from "../../_actions";
 import { validateSignUpInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
 import { createUser, deleteUsers, getUsers } from "@/libs/dal/users";

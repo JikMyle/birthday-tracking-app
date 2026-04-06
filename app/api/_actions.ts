@@ -49,3 +49,30 @@ export function validateId(
 
     return { valid: true, data: result.data };
 }
+
+export function validateIdList(
+    list: unknown,
+): { valid: true; data: number[] } | { valid: false; response: NextResponse } {
+    const result = z
+        .array(idSchema)
+        .min(1, "List of IDs must not be empty")
+        .safeParse(list);
+
+    if (!result.success) {
+        return {
+            valid: false,
+            response: NextResponse.json(
+                {
+                    message: "Invalid ID list",
+                    errors: z.flattenError(result.error),
+                },
+                { status: 400 },
+            ),
+        };
+    }
+
+    return {
+        valid: true,
+        data: result.data,
+    };
+}
