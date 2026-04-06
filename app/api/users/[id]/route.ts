@@ -1,4 +1,3 @@
-import { Role } from "@/generated/prisma/enums";
 import { verifySession } from "@/libs/dal/session";
 import {
     getUserById,
@@ -111,7 +110,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     try {
         const result = await updateUserById(validatedId.data, {
             ...validatedUserInfo.data,
-            role: Role.USER,
         });
         return NextResponse.json(result, { status: 200 });
     } catch (error) {

@@ -1,4 +1,3 @@
-import { Role } from "@/generated/prisma/enums";
 import { createUser } from "@/libs/dal/users";
 import { validateSignUpInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,10 +5,7 @@ import errorHandler from "@/libs/errorHandler";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
     const body = await req.json();
-    const validated = validateSignUpInput({
-        ...body,
-        role: Role.USER,
-    });
+    const validated = validateSignUpInput(body);
 
     if (!validated.valid) {
         return validated.response;
