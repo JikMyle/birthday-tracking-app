@@ -1,21 +1,11 @@
-import { User } from "@/generated/prisma/client";
-import { createUserSchema } from "@/libs/validation/schemas/userSchemas";
+import { CreateUserInput, createUserSchema } from "@/libs/validation/schemas";
+import z from "@/node_modules/zod/v4/classic/external.cjs";
 import { NextResponse } from "next/server";
-import z from "zod";
 
-type omittedFields =
-    | "id"
-    | "deletedAt"
-    | "createdAt"
-    | "updatedAt"
-    | "emailVerified"
-    | "verificationToken"
-    | "tokenExpiresAt";
-
-export default function validateNewUser(
+export function validateSignUpInput(
     userData: unknown,
 ):
-    | { valid: true; data: Omit<User, omittedFields> }
+    | { valid: true; data: CreateUserInput }
     | { valid: false; response: NextResponse } {
     const result = createUserSchema.safeParse(userData);
 

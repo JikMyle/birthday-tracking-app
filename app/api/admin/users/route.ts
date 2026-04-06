@@ -1,5 +1,5 @@
 import { validateIdList } from "@/libs/validation/validators/validateIdList";
-import validateNewUser from "@/libs/validation/validators/validateNewUser";
+import { validateSignUpInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
 import { createUser, deleteUsers, getUsers } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // NOTE: Handle email verification in the future
 
     const body = await request.json();
-    const validated = validateNewUser(body);
+    const validated = validateSignUpInput(body);
 
     if (!validated.valid) {
         return validated.response;
