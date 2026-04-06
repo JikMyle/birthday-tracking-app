@@ -1,5 +1,5 @@
 import { User } from "@/generated/prisma/client";
-import { newUserSchema } from "@/libs/validation/schemas/userSchemas";
+import { createUserSchema } from "@/libs/validation/schemas/userSchemas";
 import { NextResponse } from "next/server";
 import z from "zod";
 
@@ -17,7 +17,7 @@ export default function validateNewUser(
 ):
     | { valid: true; data: Omit<User, omittedFields> }
     | { valid: false; response: NextResponse } {
-    const result = newUserSchema.safeParse(userData);
+    const result = createUserSchema.safeParse(userData);
 
     if (!result.success) {
         return {

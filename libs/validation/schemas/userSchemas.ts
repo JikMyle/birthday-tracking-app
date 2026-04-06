@@ -18,6 +18,7 @@ export const usernameSchema = z
 
 export const emailSchema = z.email("Invalid email address");
 
+// Schema only accepts Date objects or String, anything else throws an invalid type error
 export const birthdateSchema = z.preprocess(
     (value, ctx) => {
         if (value instanceof Date) return value;
@@ -51,6 +52,7 @@ export const birthdateSchema = z.preprocess(
         ),
 );
 
+// NOTE: Add more password requirements in the future, once app is more stable
 export const passwordSchema = z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -63,27 +65,24 @@ export const emailPreferenceSchema = z.enum(
     "Invalid email preference",
 );
 
-export const newUserSchema = z.object({
+export const createUserSchema = z.object({
     username: usernameSchema,
     email: emailSchema,
     birthdate: birthdateSchema,
     password: passwordSchema,
-    role: roleSchema,
     emailPreference: emailPreferenceSchema,
 });
-
-export type NewUser = z.infer<typeof newUserSchema>;
 
 export const updateUserInfoSchema = z
     .object({
         username: usernameSchema.optional(),
         birthdate: birthdateSchema.optional(),
-        role: roleSchema.optional(),
         emailPreference: emailPreferenceSchema.optional(),
     })
     .refine(
         (data) => Object.values(data).some((value) => value !== undefined),
-        { message: "No fields provided", path: ["user"] },
+        { message: "No fields provided", path: [] },
     );
 
-export type UpdateUserInfo = z.infer<typeof updateUserInfoSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateUserInfoInput = z.infer<typeof updateUserInfoSchema>;

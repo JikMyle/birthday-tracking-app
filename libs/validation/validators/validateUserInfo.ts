@@ -1,5 +1,5 @@
 import {
-    UpdateUserInfo,
+    UpdateUserInfoInput,
     updateUserInfoSchema,
 } from "@/libs/validation/schemas/userSchemas";
 import { NextResponse } from "next/server";
@@ -8,7 +8,7 @@ import z from "zod";
 export default function validateUserInfo(
     userData: unknown,
 ):
-    | { valid: true; data: UpdateUserInfo }
+    | { valid: true; data: UpdateUserInfoInput }
     | { valid: false; response: NextResponse } {
     const result = updateUserInfoSchema.safeParse(userData);
 
