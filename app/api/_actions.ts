@@ -42,7 +42,7 @@ export function validateId(
             response: NextResponse.json(
                 {
                     message: "Invalid user ID",
-                    errors: z.flattenError(result.error).fieldErrors,
+                    errors: { id: z.flattenError(result.error).formErrors },
                 },
                 { status: 400 },
             ),
@@ -57,16 +57,23 @@ export function validateIdList(
 ): { valid: true; data: number[] } | { valid: false; response: NextResponse } {
     const result = z
         .array(idSchema)
-        .min(1, "List of IDs must not be empty")
+        .min(1, "List must not be empty")
         .safeParse(list);
 
     if (!result.success) {
+        const flattened = z.flattenError(result.error);
+        let errors = {};
+
+        if (flattened.formErrors.length > 0)
+            errors = { ids: flattened.formErrors };
+        else errors = flattened.fieldErrors;
+
         return {
             valid: false,
             response: NextResponse.json(
                 {
                     message: "Invalid ID list",
-                    errors: z.flattenError(result.error),
+                    errors: errors,
                 },
                 { status: 400 },
             ),
