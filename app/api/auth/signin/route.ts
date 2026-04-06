@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateLoginCredentials } from "../../../../libs/validation/validators/validateLoginCredentials";
 import { prisma } from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/libs/dal/session";
 import errorHandler from "@/libs/errorHandler";
+import { SignInInput, signInSchema } from "@/libs/validation/schemas";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
-    const validated = validateLoginCredentials(body.email, body.password);
+    const validated = validateSignInInput(body.email, body.password);
 
     if (!validated.valid) {
         return validated.response;
@@ -24,11 +24,10 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        if (!result) {
-            throw new Error();
-        }
-
-        if (!(await bcrypt.compare(validated.data.password, result.password))) {
+        if (
+            !result ||
+            !(await bcrypt.compare(validated.data.password, result.password))
+        ) {
             throw new Error();
         }
 
@@ -40,11 +39,40 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(
             {
-                message: "Login successful",
+                message: "Successfully signed in",
             },
             { status: 200 },
         );
     } catch (err) {
-        return errorHandler(err);
+        return await errorHandler(err);
     }
+}
+
+function validateSignInInput(
+    email: unknown,
+    password: unknown,
+):
+    | { valid: true; data: SignInInput }
+    | { valid: false; response: NextResponse } {
+    const result = signInSchema.safeParse({
+        email: email,
+        password: password,
+    });
+
+    if (!result.success) {
+        return {
+            valid: false,
+            response: NextResponse.json(
+                {
+                    message: "Invalid email or password",
+                },
+                { status: 400 },
+            ),
+        };
+    }
+
+    return {
+        valid: true,
+        data: { ...result.data },
+    };
 }
