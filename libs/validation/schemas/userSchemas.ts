@@ -5,7 +5,7 @@ import z from "zod";
 // Schema only accepts numbers or parsable strings, anything else throws an invalid type error
 export const idSchema = z.preprocess(
     (value, ctx) => {
-        if (value instanceof Number) return value;
+        if (typeof value === "number") return value;
 
         if (typeof value !== "string") {
             ctx.addIssue({
@@ -23,6 +23,8 @@ export const idSchema = z.preprocess(
             });
             return z.NEVER;
         }
+
+        return Number(value);
     },
     z.coerce
         .number({ error: "ID must be a number" })
