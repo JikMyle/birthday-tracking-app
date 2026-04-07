@@ -1,7 +1,11 @@
 "use client";
 
 import { CalendarBirthdates } from "@/app/(app)/home/context";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+    useQuery,
+    useQueryClient,
+    useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useEffect } from "react";
 import { api } from "../api";
 
@@ -53,7 +57,7 @@ export default function useCalendarBirthdays(month?: number) {
         });
     }, [month]);
 
-    return useSuspenseQuery({
+    return useQuery({
         queryKey: ["birthdays", "count", month ?? new Date().getUTCFullYear()],
         queryFn: async (): Promise<{
             total: number;

@@ -30,9 +30,7 @@ function Header(): ReactNode {
 
     return (
         <header className="flex h-20 items-end mb-4">
-            <Suspense fallback={<HeaderTextSkeleton />}>
-                <HeaderText />
-            </Suspense>
+            <HeaderText />
 
             <div className="flex flex-col h-full w-24 md:w-48 justify-between">
                 <UpButton />
@@ -55,10 +53,13 @@ function HeaderTextSkeleton(): ReactNode {
 
 function HeaderText(): ReactNode {
     const { state } = useCalendarContext();
-    const { data, error } =
-        state.viewType === "year"
-            ? useCalendarBirthdays()
-            : useCalendarBirthdays(state.month);
+    const { data, isLoading } = useCalendarBirthdays(
+        state.viewType === "year" ? undefined : state.month,
+    );
+
+    if (isLoading || !data) {
+        return <HeaderTextSkeleton />;
+    }
 
     const count =
         state.viewType === "year"
@@ -239,38 +240,10 @@ function Body(): ReactNode {
     return (
         <section className="bg-base-100/30 rounded-2xl p-4 h-120">
             {state.viewType === "month" ? (
-                <Suspense fallback={<BodyMonthGridSkeleton />}>
-                    <CalendarMonthGrid />
-                </Suspense>
+                <CalendarMonthGrid />
             ) : (
-                <Suspense fallback={<BodyYearGridSkeleton />}>
-                    <CalendarYearGrid />
-                </Suspense>
+                <CalendarYearGrid />
             )}
         </section>
-    );
-}
-
-function BodyMonthGridSkeleton(): ReactNode {
-    return (
-        <div className="grid grid-cols-7 grid-rows-[2rem_repeat(5,1fr)] h-full items-center gap-2">
-            {Array.from({ length: 42 }).map((item, index) => (
-                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
-                    <div className="skeleton grow"></div>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-function BodyYearGridSkeleton(): ReactNode {
-    return (
-        <div className="grid grid-cols-4 grid-rows-3 grow h-full items-center gap-2">
-            {Array.from({ length: 12 }).map((item, index) => (
-                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
-                    <div className="skeleton grow"></div>
-                </div>
-            ))}
-        </div>
     );
 }

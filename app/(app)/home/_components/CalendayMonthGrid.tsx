@@ -8,15 +8,20 @@ import useCalendarBirthdays from "@/libs/hooks/useCalendarBirthdays";
 
 export function CalendarMonthGrid(): ReactNode {
     const { state } = useCalendarContext();
+    const { data, isLoading } = useCalendarBirthdays(state.month);
 
-    const { data, error } = useCalendarBirthdays(state.month);
+    if (isLoading || !data) {
+        return <Skeleton />;
+    }
 
     // Use UTC-based date math to avoid server-client date mismatch
     const firstDay = new Date(
-        Date.UTC(state.year, state.month - 1, 1),
+        Date.UTC(state.year, state.month - 1, 1, 0, 0, 0, 0),
     ).getUTCDay();
 
-    const lastDay = new Date(Date.UTC(state.year, state.month, 0)).getUTCDate();
+    const lastDay = new Date(
+        Date.UTC(state.year, state.month, 0, 0, 0, 0, 0),
+    ).getUTCDate();
 
     const counts = data?.birthdates[state.month].days || {};
 
@@ -54,6 +59,7 @@ export function CalendarMonthGrid(): ReactNode {
         </div>
     );
 }
+
 function Days(): ReactNode {
     const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
     return (
@@ -72,5 +78,17 @@ function Days(): ReactNode {
                 );
             })}
         </>
+    );
+}
+
+function Skeleton(): ReactNode {
+    return (
+        <div className="grid grid-cols-7 grid-rows-[2rem_repeat(5,1fr)] h-full items-center gap-2">
+            {Array.from({ length: 42 }).map((item, index) => (
+                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
+                    <div className="skeleton grow"></div>
+                </div>
+            ))}
+        </div>
     );
 }
