@@ -1,8 +1,9 @@
 import { FormState } from "@/libs/types";
-import { signInSchema } from "../../libs/validation/authSchemas";
+import { SignInInput, signInSchema } from "../../libs/validation/authSchemas";
 import { api } from "@/libs/api";
+import z from "zod";
 
-export async function login(
+export async function signIn(
     state: FormState,
     formData: FormData,
 ): Promise<FormState> {
@@ -10,34 +11,44 @@ export async function login(
         email: formData.get("email"),
         password: formData.get("password"),
     };
+
     const validated = await signInSchema.safeParseAsync(credentials);
 
     if (!validated.success) {
+        const errors = z.flattenError(validated.error).fieldErrors;
+
         return {
             ...state,
             errors: {
-                form: "Invalid email or password",
+                email: errors.email?.at(0),
+                password: errors.password?.at(0),
             },
             success: null,
         };
     }
 
     try {
-        const response = await fetch(api("/api/auth/login"), {
+        const response = await fetch(api("/api/auth/signin"), {
+            headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-            }),
+                email: validated.data.email,
+                password: validated.data.password,
+            } as SignInInput),
         });
 
-        const json = await response.json();
+        let json = null;
+        try {
+            json = await response.json();
+        } catch (err) {
+            json = { message: response.statusText };
+        }
 
         if (!response.ok) {
             return {
                 ...state,
                 errors: {
-                    form: json.message ?? "Failed to login",
+                    form: json.message ?? "Failed to sign in",
                 },
                 success: null,
             };

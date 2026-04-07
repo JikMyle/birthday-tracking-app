@@ -2,7 +2,7 @@ import { User } from "@/generated/prisma/client";
 
 export interface FormState {
     formData: Record<string, string | string[]> | null;
-    errors: Record<string, string> | null;
+    errors: Record<string, string | undefined> | null;
     success: string | null;
 }
 export type UserSummary = Pick<

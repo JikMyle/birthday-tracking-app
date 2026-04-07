@@ -3,7 +3,7 @@ import { useActionState, useEffect } from "react";
 import Button from "../_components/Button";
 import Link from "next/link";
 import Alert from "../_components/Alert";
-import { login } from "./_actions";
+import { signIn } from "./_actions";
 import { TextInput } from "../_components/form/TextInput";
 import { InputLabelContainer } from "../_components/form/InputLabelContainer";
 import { PasswordInput } from "../_components/form/PasswordInput";
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { FormCardContainer } from "../_components/form/FormCardContainer";
 
 export function SignInForm() {
-    const [state, formAction, pending] = useActionState(login, {
+    const [state, formAction, pending] = useActionState(signIn, {
         formData: null,
         errors: null,
         success: null,
@@ -27,13 +27,13 @@ export function SignInForm() {
             className="w-full max-w-sm max-md:bg-transparent max-md:shadow-none max-md:py-0"
             action={formAction}
         >
-            {state.success || state.errors ? (
+            {state.success || state.errors?.form ? (
                 <Alert
                     className="grow mb-4"
                     type={
                         state.success
                             ? "success"
-                            : state.errors
+                            : state.errors?.form
                               ? "error"
                               : undefined
                     }
@@ -51,6 +51,7 @@ export function SignInForm() {
                     autoComplete="email"
                     minLength={1}
                     required={true}
+                    error={state.errors?.email}
                 />
             </InputLabelContainer>
 
@@ -60,8 +61,9 @@ export function SignInForm() {
                     name="password"
                     type="password"
                     placeholder="Enter password"
-                    minLength={6}
+                    minLength={1}
                     required={true}
+                    error={state.errors?.password}
                 />
             </InputLabelContainer>
 
