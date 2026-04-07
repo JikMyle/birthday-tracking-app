@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export function TopBar({ username }: { username: string }): React.ReactNode {
     return (
-        <header className="font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-base-100 text-primary">
+        <header className="z-10 font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-base-100 text-primary">
             <Title className="mr-auto"></Title>
             <Greeting username={username}></Greeting>
             <Avatar src=""></Avatar>
@@ -19,9 +19,7 @@ export function TopBar({ username }: { username: string }): React.ReactNode {
 
 function Title({ className }: { className?: string }): React.ReactNode {
     return (
-        <div
-            className={`flex items-center gap-2 text-primary ${className ?? ""}`}
-        >
+        <div className={`flex items-center text-primary ${className ?? ""}`}>
             <AppIcon className="hidden md:flex" />
             <Link href={"/"} className="text-3xl font-black">
                 BDBashboard
