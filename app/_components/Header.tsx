@@ -23,12 +23,13 @@ function Title({ className }: { className?: string }): React.ReactNode {
             className={`flex items-center gap-2 text-primary ${className ?? ""}`}
         >
             <AppIcon className="hidden md:flex" />
-            <Link href={"/"} className="text-2xl md:text-3xl font-black">
+            <Link href={"/"} className="text-3xl font-black">
                 BDBashboard
             </Link>
         </div>
     );
 }
+
 function Greeting({
     className,
     username,
@@ -49,22 +50,22 @@ function Greeting({
 function Avatar({ src }: { src: string }): React.ReactNode {
     const router = useRouter();
     const mutation = useMutation({
-        mutationKey: ["logout"],
+        mutationKey: ["signout"],
         mutationFn: async () => {
             const response = await fetch(api("/api/auth/signout"), {
-                method: "POST",
+                method: "DELETE",
             });
 
             if (!response.ok) {
                 throw new Error("Failed to sign out. Please try again.");
             }
 
-            router.push("/login");
-            return "Successfully signed out. Redirecting to login.";
+            router.push("/signin");
+            return "Successfully signed out. Redirecting to sign in page.";
         },
     });
 
-    const handleOnLogout = function (e: React.MouseEvent<HTMLAnchorElement>) {
+    const handleOnSignOut = function (e: React.MouseEvent<HTMLAnchorElement>) {
         e.preventDefault();
         mutation.mutate();
     };
@@ -97,7 +98,7 @@ function Avatar({ src }: { src: string }): React.ReactNode {
                         <a
                             className="text-base-content"
                             href=""
-                            onClick={handleOnLogout}
+                            onClick={handleOnSignOut}
                         >
                             <LogOutIcon size={16} /> Sign out
                         </a>
