@@ -165,7 +165,7 @@ export default function SignUpForm(): ReactNode {
 
             <Link
                 className="link link-primary link-hover text-xs mb-4 mt-10 w-fit"
-                href={"/login"}
+                href={"/signin"}
             >
                 Already have an account?
             </Link>

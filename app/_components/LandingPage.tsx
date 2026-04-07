@@ -28,7 +28,7 @@ export default function LandingPage() {
                     {/* <Link className="link link-hover" href={"/about"}>
                         About
                     </Link> */}
-                    <Link className="link link-hover" href={"/login"}>
+                    <Link className="link link-hover" href={"/signin"}>
                         Sign In
                     </Link>
                     <Link className="btn btn-primary" href={"/signup"}>
@@ -58,7 +58,7 @@ export default function LandingPage() {
                 <Link
                     className="btn btn-primary btn-lg"
                     aria-label="Explore the Calendar"
-                    href={"/login"}
+                    href={"/signin"}
                 >
                     Explore the Calendar
                 </Link>

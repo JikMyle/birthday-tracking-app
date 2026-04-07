@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
     params: Promise<{
-        id: number;
+        id: string;
     }>;
 }
 

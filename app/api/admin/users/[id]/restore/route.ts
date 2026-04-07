@@ -1,15 +1,15 @@
 import errorHandler from "@/libs/errorHandler";
 import { validateId } from "@/app/api/_actions";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { restoreUserById } from "@/libs/dal/users";
 
 interface Params {
     params: Promise<{
-        id: number;
+        id: string;
     }>;
 }
 
-export async function PATCH({ params }: Params): Promise<NextResponse> {
+export async function PATCH(req: NextRequest, { params }: Params) {
     const { id } = await params;
     const validated = validateId(id);
 

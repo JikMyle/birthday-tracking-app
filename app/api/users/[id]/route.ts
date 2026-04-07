@@ -12,7 +12,7 @@ import { UserSummary } from "@/libs/types";
 
 interface Params {
     params: Promise<{
-        id: number;
+        id: string;
     }>;
 }
 

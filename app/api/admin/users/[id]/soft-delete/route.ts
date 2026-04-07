@@ -5,7 +5,7 @@ import { softDeleteUserById } from "@/libs/dal/users";
 
 interface Params {
     params: Promise<{
-        id: number;
+        id: string;
     }>;
 }
 
