@@ -45,8 +45,14 @@ function Header(): ReactNode {
 function HeaderTextSkeleton(): ReactNode {
     return (
         <div className="flex flex-col grow h-full">
-            <div className="h-14 md:w-md skeleton">A</div>
-            <div className="text-xs md:w-xs skeleton mt-1">A</div>
+            <div className="h-full skeleton skeleton-text text-4xl md:text-6xl max-md:pl-1">
+                Please
+                <br className="md:hidden" />
+                wait...
+            </div>
+            <div className="skeleton skeleton-text pl-1 hidden md:flex">
+                Counting birthdays...
+            </div>
         </div>
     );
 }
@@ -118,7 +124,7 @@ function HeaderCounter({ count }: { count: number }): ReactNode {
     }
 
     return (
-        <h4 className="text-xs text-secondary tracking-wide font-semibold overflow-hidden whitespace-nowrap">
+        <h4 className="text-xs text-secondary tracking-wide font-semibold overflow-hidden whitespace-nowrap mt-1">
             {message + state.viewType}
         </h4>
     );
@@ -154,6 +160,7 @@ function Navigation(): ReactNode {
 
             <Button
                 className="hidden md:flex btn-primary btn-soft btn-sm md:btn-md"
+                aria-label="Jump to today"
                 onClick={handleToToday}
             >
                 Today
@@ -184,6 +191,11 @@ function UpButton(): ReactNode {
     return (
         <Button
             className={`md:hidden btn-primary btn-soft btn-sm`}
+            aria-label={
+                state.viewType === "month"
+                    ? "Switch to year view"
+                    : "Switch to month view"
+            }
             onClick={
                 state.viewType === "month" ? handleUpClick : handleJumpToMonth
             }
@@ -220,12 +232,14 @@ function ViewTypeToggle(): ReactNode {
         <div className="hidden md:flex join w-full">
             <Button
                 className={`grow btn-primary btn-sm join-item ${state.viewType !== "month" && "btn-soft"}`}
+                aria-label="Switch to month view"
                 onClick={handleSwitchToMonthClick}
             >
                 Month
             </Button>
             <Button
                 className={`grow btn-primary btn-sm join-item ${state.viewType !== "year" && "btn-soft"}`}
+                aria-label="Switch to year view"
                 onClick={handleSwitchToYearClick}
             >
                 Year

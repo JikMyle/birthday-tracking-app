@@ -6,11 +6,13 @@ import Link from "next/link";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/libs/api";
 import { useRouter } from "next/navigation";
+import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export function TopBar({ username }: { username: string }): React.ReactNode {
     return (
         <header className="z-10 font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-base-100 text-primary">
             <Title className="mr-auto"></Title>
+            <ThemeToggleButton />
             <Greeting username={username}></Greeting>
             <Avatar src=""></Avatar>
         </header>
@@ -87,7 +89,7 @@ function Avatar({ src }: { src: string }): React.ReactNode {
             </button>
             <nav>
                 <ul
-                    className="dropdown menu min-w-48 mt-2 rounded-box bg-base-100 shadow-sm"
+                    className="dropdown menu min-w-48 mt-2 rounded-box bg-base-300 shadow-sm"
                     popover="auto"
                     id="avatar-dropdown"
                     style={{ positionAnchor: "--avatar-dropdown-anchor" }}

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import { Footer } from "./_components/Footer";
 import { ReactQueryClientProvider } from "./_components/ReactQueryClientProvider";
+import { ThemeProvider } from "next-themes";
 
 const plusJakarta = Plus_Jakarta_Sans({
     variable: "--font-plus-jakarta",
@@ -26,12 +27,18 @@ export default function RootLayout({
 }>) {
     return (
         <ReactQueryClientProvider>
-            <html lang="en" data-theme="light">
+            <html lang="en" suppressHydrationWarning>
                 <body
-                    className={`${plusJakarta.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen`}
+                    className={`${plusJakarta.variable} ${robotoMono.variable} antialiased flex flex-col min-h-screen 
+                        bg-linear-0 md:bg-radial-[at_50%_100%] from-primary/30 to-50% to-base-100 dark:from-primary bg-fixed`}
                 >
-                    {children}
-                    <Footer />
+                    <ThemeProvider
+                        attribute={"data-theme"}
+                        enableSystem={false}
+                    >
+                        {children}
+                        <Footer />
+                    </ThemeProvider>
                 </body>
             </html>
         </ReactQueryClientProvider>

@@ -15,7 +15,7 @@ export default async function UserLayout({
                     session.isAuth ? (session.username as string) : "Guest"
                 }
             ></TopBar>
-            <main className="relative flex flex-col md:p-12 min-h-screen w-full bg-base-100 font-sans bg-linear-30 from-white to-primary-content">
+            <main className="relative flex flex-col md:p-12 min-h-screen w-full font-sans">
                 {children}
             </main>
         </>

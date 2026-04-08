@@ -18,13 +18,13 @@ export function PasswordInput({
                 <input
                     {...props}
                     type={isPasswordShowing ? "text" : "password"}
-                    className={`input ${hasValidation && "validator"} join-item ${className ?? ""}`}
+                    className={`input text-base-content ${hasValidation && "validator"} join-item ${className ?? ""} ${error && "input-error"}`}
                 />
-                {error ? (
-                    <div className="validator-hint visible! text-error">
-                        {error}
-                    </div>
-                ) : null}
+                <div
+                    className={`validator-hint ${error ? "visible! text-error" : "hidden"}`}
+                >
+                    {error}
+                </div>
             </div>
             <Button
                 className="join-item p-2"

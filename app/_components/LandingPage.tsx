@@ -11,11 +11,12 @@ import Link from "next/link";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { AppIcon } from "./AppIcon";
 import { IconContainer } from "./IconContainer";
+import { ThemeToggleButton } from "./ThemeToggleButton";
 
 export default function LandingPage() {
     return (
         <>
-            <header className="sticky top-0 z-10 font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-white text-primary">
+            <header className="sticky top-0 z-10 font-sans flex items-center w-full h-16 p-4 gap-4 shadow-md bg-base-100 text-primary">
                 <div className="flex items-center mr-auto">
                     <AppIcon className="hidden md:flex" />
                     <Link className="text-3xl font-black" href={"/home"}>
@@ -23,12 +24,17 @@ export default function LandingPage() {
                     </Link>
                 </div>
 
+                <ThemeToggleButton />
+
                 <HeaderMobileNavMenu />
                 <nav className="hidden md:flex gap-4 items-center">
                     {/* <Link className="link link-hover" href={"/about"}>
                         About
                     </Link> */}
-                    <Link className="link link-hover" href={"/signin"}>
+                    <Link
+                        className="link link-hover text-base-content"
+                        href={"/signin"}
+                    >
                         Sign In
                     </Link>
                     <Link className="btn btn-primary" href={"/signup"}>
@@ -37,7 +43,7 @@ export default function LandingPage() {
                 </nav>
             </header>
 
-            <section className="flex flex-col items-center w-full min-h-screen px-4 py-16 font-sans text-base-content bg-linear-30 from-white to-primary-content">
+            <section className="flex flex-col items-center w-full min-h-screen px-4 py-16 font-sans text-base-content">
                 <h1 className="text-4xl md:text-6xl font-black text-center">
                     How big is
                     <br className="md:hidden" /> today's{" "}

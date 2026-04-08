@@ -20,7 +20,7 @@ export function CalendarCell({
 
     return (
         <button
-            className={`indicator group relative btn ${count ? "btn-primary" : "btn-neutral"} ${today ? "btn-outline border-2" : "btn-ghost"} rounded-full md:rounded-2xl w-full h-full`}
+            className={`indicator group relative btn ${count && "btn-primary"} ${today ? "btn-outline border-2" : "btn-ghost"} rounded-full md:rounded-2xl w-full h-full`}
             aria-label={label}
             onClick={onClick}
         >

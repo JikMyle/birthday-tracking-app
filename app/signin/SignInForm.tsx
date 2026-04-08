@@ -68,12 +68,15 @@ export function SignInForm() {
             </InputLabelContainer>
 
             <div className="flex justify-between text-xs mb-4 mt-10">
-                <Link className="link link-primary link-hover" href={"/signup"}>
+                <Link
+                    className="link link-primary link-hover dark:text-base-content"
+                    href={"/signup"}
+                >
                     Don't have an account?
                 </Link>
 
                 <Link
-                    className="link link-primary link-hover"
+                    className="link link-primary link-hover dark:text-base-content"
                     href={"/forgot-password"}
                 >
                     Forgot password?

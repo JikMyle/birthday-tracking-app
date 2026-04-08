@@ -19,7 +19,7 @@ export default function SignUpForm(): ReactNode {
     const router = useRouter();
 
     useEffect(() => {
-        if (state.success) router.push("/login");
+        if (state.success) router.push("/signin");
     }, [state]);
 
     return (
@@ -46,7 +46,7 @@ export default function SignUpForm(): ReactNode {
                 <TextInput
                     id="username"
                     name="username"
-                    autoComplete="username displayname profilename accountname"
+                    autoComplete="username"
                     minLength={2}
                     placeholder="Enter username"
                     required={true}
@@ -71,12 +71,12 @@ export default function SignUpForm(): ReactNode {
                 ></TextInput>
             </InputLabelContainer>
 
-            <InputLabelContainer label="Birthday" htmlFor="birthdate">
+            <InputLabelContainer label="Date of Birth" htmlFor="birthdate">
                 <TextInput
                     type="date"
                     id="birthdate"
                     name="birthdate"
-                    autoComplete="birthday birthdate dateofbirth bday"
+                    autoComplete="birthdate"
                     required={true}
                     hasValidation={true}
                     error={state.errors?.birthdate ?? undefined}
@@ -101,7 +101,7 @@ export default function SignUpForm(): ReactNode {
                 label="Confirm Password"
                 htmlFor="confirmPassword"
             >
-                <TextInput
+                <PasswordInput
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
@@ -116,7 +116,7 @@ export default function SignUpForm(): ReactNode {
                 <legend className="fieldset-legend">Email Preference</legend>
                 <div className="flex gap-4">
                     <label
-                        className="flex items-center gap-2 text-neutral"
+                        className="flex items-center gap-2"
                         htmlFor="emailPreferenceNone"
                     >
                         <input
@@ -132,7 +132,7 @@ export default function SignUpForm(): ReactNode {
 
                     <label
                         htmlFor="emailPreferenceServer"
-                        className="flex items-center gap-2 text-neutral"
+                        className="flex items-center gap-2"
                     >
                         <input
                             type="radio"
@@ -146,7 +146,7 @@ export default function SignUpForm(): ReactNode {
 
                     <label
                         htmlFor="emailPreferenceEveryone"
-                        className="flex items-center gap-2 text-neutral"
+                        className="flex items-center gap-2"
                     >
                         <input
                             type="radio"
@@ -158,13 +158,13 @@ export default function SignUpForm(): ReactNode {
                         Everyone
                     </label>
                 </div>
-                <span className="text-base-content/50 label">
+                <span className="label">
                     Who would you like to receive emails from?
                 </span>
             </fieldset>
 
             <Link
-                className="link link-primary link-hover text-xs mb-4 mt-10 w-fit"
+                className="link link-primary link-hover dark:text-base-content text-xs mb-4 mt-10 w-fit"
                 href={"/signin"}
             >
                 Already have an account?

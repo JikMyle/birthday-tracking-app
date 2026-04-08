@@ -28,12 +28,19 @@ export function CalendarMonthGrid(): ReactNode {
     const cells: ReactNode[] = [];
     for (let index = -1 * firstDay + 1; index < 36 - firstDay; index++) {
         if (index < 1 || index > lastDay) {
-            cells.push(<CalendarCell key={index} />);
+            cells.push(
+                <CalendarCell key={`calendar day empty cell ${index}`} />,
+            );
             continue;
         }
 
         if (!counts[index]) {
-            cells.push(<CalendarCell key={index} date={index} />);
+            cells.push(
+                <CalendarCell
+                    key={`calendar day cell ${index}`}
+                    date={index}
+                />,
+            );
             continue;
         }
 
@@ -43,7 +50,7 @@ export function CalendarMonthGrid(): ReactNode {
 
         cells.push(
             <CalendarCell
-                key={index}
+                key={`calendar day cell ${index}`}
                 date={index}
                 today={today}
                 count={counts[index + 1]}
@@ -64,12 +71,11 @@ function Days(): ReactNode {
     const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
     return (
         <>
-            {days.map((day, index) => {
+            {days.map((day) => {
                 return (
                     <div
-                        className={`flex justify-center items-center text-base-content/50 text-center
-                        ${index !== 0 ? "border-l-0" : ""}`}
-                        key={index}
+                        className={`flex justify-center items-center text-base-content/50 text-center`}
+                        key={`calendar col-header ${day}`}
                     >
                         <span className="font-semibold tracking-widest text-xs">
                             {day}
@@ -84,8 +90,11 @@ function Days(): ReactNode {
 function Skeleton(): ReactNode {
     return (
         <div className="grid grid-cols-7 grid-rows-[2rem_repeat(5,1fr)] h-full items-center gap-2">
-            {Array.from({ length: 42 }).map((item, index) => (
-                <div className="flex p-1 md:p-2 h-full w-full" key={index}>
+            {Array.from({ length: 6 }).map((item, index) => (
+                <div
+                    className={`flex p-2 h-full w-full -col-end-1 col-start-1`}
+                    key={`calendar skeleton row ${index}`}
+                >
                     <div className="skeleton grow"></div>
                 </div>
             ))}
