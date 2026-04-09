@@ -16,7 +16,7 @@ CREATE TABLE `EmailVerification` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `expiresAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `EmailVerification_userId_key`(`userId`)
+    PRIMARY KEY (`userId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
