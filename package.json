@@ -1,6 +1,6 @@
 {
-  "name": "birthday-tracker-v0.2",
-  "version": "0.2.0",
+  "name": "birthday-tracker",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
