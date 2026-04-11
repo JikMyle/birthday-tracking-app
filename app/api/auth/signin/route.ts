@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { createSession } from "@/libs/dal/session";
 import errorHandler from "@/libs/errorHandler";
 import { SignInInput, signInSchema } from "@/libs/validation";
+import { comparePassword } from "@/libs/bcrypt";
 
 export async function POST(req: NextRequest) {
     const body = await req.json();
@@ -24,10 +25,12 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        if (
-            !result ||
-            !(await bcrypt.compare(validated.data.password, result.password))
-        ) {
+        const doesPasswordMatch = await comparePassword(
+            validated.data.password,
+            result?.password ?? "",
+        );
+
+        if (!result || !doesPasswordMatch) {
             throw new Error();
         }
 
