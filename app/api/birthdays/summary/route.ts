@@ -1,14 +1,22 @@
-import { Prisma } from "@/generated/prisma/client";
 import errorHandler from "@/libs/errorHandler";
-import { prisma } from "@/libs/db/prisma";
-import { MONTHS } from "@/libs/months";
 import { birthdaySearchSchema } from "@/libs/validation/dateSchema";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 import { getBirthdaySummary } from "@/libs/dal/birthdays";
+import logger from "@/libs/logger";
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-    const searchParams = request.nextUrl.searchParams;
+export async function GET(req: NextRequest): Promise<NextResponse> {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    const searchParams = req.nextUrl.searchParams;
+    child.trace("Received birthday summary fetch request");
 
     const params: Record<string, any> = {};
     if (searchParams.get("month"))
@@ -16,13 +24,23 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     if (searchParams.get("day"))
         params["dayOfMonth"] = Number(searchParams.get("day"));
 
+    child.trace(
+        {
+            monthPresent: !!params["month"],
+            dayOfMonthPresent: !!params["dayOfMonth"],
+        },
+        "Validating birthday search parameters",
+    );
     const validated = birthdaySearchSchema.safeParse(params);
 
     if (!validated.success) {
+        const errors = z.flattenError(validated.error);
+        child.trace(errors, "Invalid birthday search parameters received");
+
         return NextResponse.json(
             {
                 message: "Invalid search parameters",
-                errors: z.flattenError(validated.error).fieldErrors,
+                errors: errors.fieldErrors,
             },
             { status: 400 },
         );
