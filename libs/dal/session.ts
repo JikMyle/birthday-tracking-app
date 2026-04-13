@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import logger from "../logger";
 
+const SESSION_LIFE_SPAN_MILLIS = 60 * 60 * 3 * 1000;
 const encodedKey = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export interface SessionPayload extends JWTPayload {
@@ -14,12 +15,12 @@ export interface SessionPayload extends JWTPayload {
     role: Role;
 }
 
-export async function encryptSession(payload: SessionPayload) {
+export async function encryptSession(payload: SessionPayload): Promise<string> {
     const child = logger.child({ function: encryptSession.name });
     child.trace({ userId: payload.id }, "Encrypting session");
 
     const session = new SignJWT(payload)
-        .setExpirationTime("3hr")
+        .setExpirationTime(new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS))
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .sign(encodedKey);
@@ -29,7 +30,9 @@ export async function encryptSession(payload: SessionPayload) {
     return session;
 }
 
-export async function decryptSession(session: string | undefined = "") {
+export async function decryptSession(
+    session: string | undefined = "",
+): Promise<(SessionPayload & JWTPayload) | undefined> {
     const child = logger.child({ function: decryptSession.name });
     child.trace({ tokenPresent: !!session }, "Verifying session");
     try {
@@ -54,21 +57,17 @@ export async function decryptSession(session: string | undefined = "") {
     }
 }
 
-export async function createSession(payload: SessionPayload) {
+export async function createSession(payload: SessionPayload): Promise<void> {
     const child = logger.child({ function: createSession.name });
     child.trace({ userId: payload.id }, "Creating new session");
 
-    const expiresAt = new Date(Date.now() + 60 * 60 * 3 * 1000);
-    const session = await encryptSession({
-        ...payload,
-        exp: expiresAt.getMilliseconds(),
-    });
+    const session = await encryptSession(payload);
     const cookieStore = await cookies();
 
     cookieStore.set("session", session, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        expires: expiresAt,
+        expires: new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS),
         sameSite: "lax",
         path: "/",
     });
@@ -81,25 +80,26 @@ export async function createSession(payload: SessionPayload) {
     );
 }
 
-export async function updateSession() {
+export async function updateSession(): Promise<void> {
     const child = logger.child({ function: updateSession.name });
     child.trace("Refreshing session");
 
-    const session = (await cookies()).get("session")?.value;
+    const cookieStore = await cookies();
+    const session = cookieStore.get("session")?.value;
     const payload = await decryptSession(session);
 
     if (!session || !payload) {
         child.warn("Failed to refresh session");
-        return null;
+        return;
     }
 
-    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS);
+    const newSession = await encryptSession(payload);
 
-    const cookieStore = await cookies();
-    cookieStore.set("session", session, {
+    cookieStore.set("session", newSession, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        expires: expires,
+        expires: expiresAt,
         sameSite: "lax",
         path: "/",
     });
@@ -107,13 +107,13 @@ export async function updateSession() {
     child.trace(
         {
             userId: payload.id,
-            exp: Math.floor(expires.getTime() / 1000),
+            exp: expiresAt,
         },
         "Session refreshed",
     );
 }
 
-export async function deleteSession() {
+export async function deleteSession(): Promise<void> {
     const child = logger.child({ function: deleteSession.name });
     child.trace("Deleting session");
 
@@ -126,9 +126,9 @@ export async function deleteSession() {
 export type SessionAuth =
     | {
           isAuth: true;
-          id?: number;
-          username?: string;
-          role?: Role;
+          id: number;
+          username: string;
+          role: Role;
       }
     | { isAuth: false };
 
@@ -144,8 +144,8 @@ export const verifySession = cache(async function (): Promise<SessionAuth> {
 
     return {
         isAuth: true,
-        id: session?.id,
-        username: session?.username,
-        role: session?.role,
+        id: session.id,
+        username: session.username,
+        role: session.role,
     };
 });
