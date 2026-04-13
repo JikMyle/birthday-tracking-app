@@ -30,7 +30,7 @@ export async function createUser(user: CreateUserInput): Promise<UserSummary> {
             },
         });
 
-        child.trace({ userId: user.id }, "User successfully created");
+        child.info({ userId: user.id }, "User successfully created");
         return user;
     } catch (error) {
         child.error({ error }, "Failed to create user");
@@ -78,7 +78,7 @@ export async function getUsers(
 
 export async function getUserById(id: number): Promise<PublicUser | null> {
     const child = logger.child({ function: getUserById.name, userId: id });
-    child.trace("Fetching user by ID");
+    child.trace("Fetching user");
 
     try {
         const user = await prisma.user.findUnique({
@@ -86,22 +86,22 @@ export async function getUserById(id: number): Promise<PublicUser | null> {
             omit: { password: true },
         });
 
-        child.trace(
-            user
-                ? "Successfully fetched user with ID"
-                : "No users found with matching ID",
-        );
+        if (user) {
+            child.trace("User successfully fetched");
+        } else {
+            child.warn("No user found with matching ID");
+        }
 
         return user;
     } catch (error) {
-        child.error({ error }, "Failed to fetch user with ID");
+        child.error({ error }, "Failed to fetch user");
         throw error;
     }
 }
 
 export async function deleteUserById(id: number): Promise<void> {
     const child = logger.child({ function: deleteUserById.name, userId: id });
-    child.trace("Deleting user by ID");
+    child.trace("Deleting user");
 
     try {
         const deleted = await prisma.user.delete({
@@ -109,9 +109,9 @@ export async function deleteUserById(id: number): Promise<void> {
             omit: { password: true },
         });
 
-        child.trace("Successfully deleted user with ID");
+        child.info("User successfully deleted");
     } catch (error) {
-        child.error({ error: error }, "Failed to delete user with ID");
+        child.error({ error: error }, "Failed to delete user");
         throw error;
     }
 }
@@ -127,7 +127,7 @@ export async function updateUserById(
             birthdatePresent: !!data.birthdate,
             emailPreferencePresent: !!data.emailPreference,
         },
-        "Updating user with ID",
+        "Updating user",
     );
 
     try {
@@ -146,18 +146,18 @@ export async function updateUserById(
             },
         });
 
-        child.trace("Successfully updated user with ID");
+        child.info("User successfully updated");
 
         return updated;
     } catch (error) {
-        child.error({ error: error }, "Failed to update user with ID");
+        child.error({ error: error }, "Failed to update user");
         throw error;
     }
 }
 
 export async function softDeleteUsers(ids: number[]): Promise<BatchPayload> {
     const child = logger.child({ function: softDeleteUsers.name });
-    child.trace({ count: ids.length }, "Soft-deleting users with IDs");
+    child.trace({ count: ids.length }, "Soft-deleting users");
 
     try {
         const deleted = await prisma.user.updateMany({
@@ -171,14 +171,14 @@ export async function softDeleteUsers(ids: number[]): Promise<BatchPayload> {
             },
         });
 
-        child.trace(
-            { count: ids.length, deletedCount: deleted.count },
-            "Successfully soft-deleted users with IDs",
+        child.info(
+            { targetCount: ids.length, affectedCount: deleted.count },
+            "Users successfully soft-deleted",
         );
 
         return deleted;
     } catch (error) {
-        child.error({ error }, "Failed to soft-delete users with IDs");
+        child.error({ error }, "Failed to soft-delete users");
         throw error;
     }
 }
@@ -188,7 +188,7 @@ export async function softDeleteUserById(id: number): Promise<BatchPayload> {
         function: softDeleteUserById.name,
         userId: id,
     });
-    child.trace("Soft-deleting user with ID");
+    child.trace("Soft-deleting user");
 
     try {
         const deleted = await prisma.user.updateMany({
@@ -196,18 +196,18 @@ export async function softDeleteUserById(id: number): Promise<BatchPayload> {
             data: { updatedAt: new Date(), deletedAt: new Date() },
         });
 
-        child.trace("Successfully soft-deleted user with ID");
+        child.info("User successfully soft-deleted");
 
         return deleted;
     } catch (error) {
-        child.error({ error: error }, "Failed to soft-delete user with ID");
+        child.error({ error: error }, "Failed to soft-delete user");
         throw error;
     }
 }
 
 export async function deleteUsers(ids: number[]): Promise<BatchPayload> {
     const child = logger.child({ function: deleteUsers.name });
-    child.trace({ count: ids.length }, "Deleting users with IDs");
+    child.trace({ count: ids.length }, "Deleting users");
 
     try {
         const deleted = await prisma.user.deleteMany({
@@ -216,21 +216,21 @@ export async function deleteUsers(ids: number[]): Promise<BatchPayload> {
             },
         });
 
-        child.trace(
-            { count: ids.length, deletedCount: deleted.count },
-            "Successfully deleted users with IDs",
+        child.info(
+            { targetCount: ids.length, affectedCount: deleted.count },
+            "Users successfully deleted",
         );
 
         return deleted;
     } catch (error) {
-        child.error({ error: error }, "Failed to delete users with IDs");
+        child.error({ error: error }, "Failed to delete users");
         throw error;
     }
 }
 
 export async function restoreUsers(ids: number[]): Promise<BatchPayload> {
     const child = logger.child({ function: restoreUsers.name });
-    child.trace({ count: ids.length }, "Restoring users with IDs");
+    child.trace({ count: ids.length }, "Restoring users");
 
     try {
         const restored = await prisma.user.updateMany({
@@ -244,14 +244,14 @@ export async function restoreUsers(ids: number[]): Promise<BatchPayload> {
             },
         });
 
-        child.trace(
-            { count: ids.length, restoredCount: restored.count },
-            "Successfully restored users with IDs",
+        child.info(
+            { targetCount: ids.length, affectedCount: restored.count },
+            "Users successfully restored",
         );
 
         return restored;
     } catch (error) {
-        child.error({ error: error }, "Failed to restore users with IDs");
+        child.error({ error: error }, "Failed to restore users");
         throw error;
     }
 }
@@ -261,7 +261,7 @@ export async function restoreUserById(id: number): Promise<BatchPayload> {
         function: restoreUserById.name,
         userId: id,
     });
-    child.trace("Restoring user with ID");
+    child.trace("Restoring user");
 
     try {
         const restored = await prisma.user.updateMany({
@@ -269,11 +269,11 @@ export async function restoreUserById(id: number): Promise<BatchPayload> {
             data: { updatedAt: new Date(), deletedAt: null },
         });
 
-        child.trace("Successfully restored user with ID");
+        child.trace("User successfully restored");
 
         return restored;
     } catch (error) {
-        child.error({ error: error }, "Failed to restore user with ID");
+        child.error({ error: error }, "Failed to restore user");
         throw error;
     }
 }
