@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Role } from "@/generated/prisma/enums";
-import { JWTPayload, jwtVerify, SignJWT } from "jose";
+import { errors, JWTPayload, jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import logger from "../logger";
@@ -13,6 +13,18 @@ export interface SessionPayload extends JWTPayload {
     id: number;
     username: string;
     role: Role;
+}
+
+export class SessionExpiredError extends Error {
+    constructor() {
+        super("Session has expired");
+    }
+}
+
+export class SessionInvalidError extends Error {
+    constructor() {
+        super("Session is invalid or malformed");
+    }
 }
 
 export async function encryptSession(payload: SessionPayload): Promise<string> {
@@ -32,9 +44,9 @@ export async function encryptSession(payload: SessionPayload): Promise<string> {
 
 export async function decryptSession(
     session: string | undefined = "",
-): Promise<(SessionPayload & JWTPayload) | undefined> {
+): Promise<SessionPayload & JWTPayload> {
     const child = logger.child({ function: decryptSession.name });
-    child.trace({ tokenPresent: !!session }, "Verifying session");
+
     try {
         const { payload } = await jwtVerify<SessionPayload>(
             session,
@@ -43,17 +55,15 @@ export async function decryptSession(
                 algorithms: ["HS256"],
             },
         );
-
-        child.trace(
-            {
-                userId: payload.id,
-                userRole: payload.role,
-            },
-            "Session verified",
-        );
         return payload;
     } catch (error) {
-        child.warn({ error }, "Failed to verify session");
+        if (error instanceof errors.JWTExpired) {
+            child.warn("Session expired");
+            throw new SessionExpiredError();
+        }
+
+        child.warn({ error }, "Session invalid or malformed");
+        throw new SessionInvalidError();
     }
 }
 
@@ -86,31 +96,39 @@ export async function updateSession(): Promise<void> {
 
     const cookieStore = await cookies();
     const session = cookieStore.get("session")?.value;
-    const payload = await decryptSession(session);
 
-    if (!session || !payload) {
-        child.warn("Failed to refresh session");
+    if (!session) {
+        child.warn("No session cookie found");
         return;
     }
 
-    const expiresAt = new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS);
-    const newSession = await encryptSession(payload);
+    try {
+        const payload = await decryptSession(session);
 
-    cookieStore.set("session", newSession, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        expires: expiresAt,
-        sameSite: "lax",
-        path: "/",
-    });
+        const expiresAt = new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS);
+        const newSession = await encryptSession(payload);
 
-    child.trace(
-        {
-            userId: payload.id,
-            exp: expiresAt,
-        },
-        "Session refreshed",
-    );
+        cookieStore.set("session", newSession, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            expires: expiresAt,
+            sameSite: "lax",
+            path: "/",
+        });
+
+        child.trace(
+            { userId: payload.id, exp: expiresAt },
+            "Session refreshed",
+        );
+    } catch (error) {
+        if (error instanceof SessionExpiredError) {
+            child.warn("Session expired during refresh");
+        } else if (error instanceof SessionInvalidError) {
+            child.warn("Invalid session during refresh");
+        } else {
+            child.error({ error }, "Unexpected error during session refresh");
+        }
+    }
 }
 
 export async function deleteSession(): Promise<void> {
@@ -134,18 +152,16 @@ export type SessionAuth =
 
 export const verifySession = cache(async function (): Promise<SessionAuth> {
     const cookie = (await cookies()).get("session")?.value;
-    const session = await decryptSession(cookie);
 
-    if (!session?.id) {
+    try {
+        const session = await decryptSession(cookie);
         return {
-            isAuth: false,
+            isAuth: true,
+            id: session.id,
+            username: session.username,
+            role: session.role,
         };
+    } catch (error) {
+        return { isAuth: false };
     }
-
-    return {
-        isAuth: true,
-        id: session.id,
-        username: session.username,
-        role: session.role,
-    };
 });
