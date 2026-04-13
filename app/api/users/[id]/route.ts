@@ -5,10 +5,10 @@ import {
     updateUserById,
 } from "@/libs/dal/users";
 import errorHandler from "@/libs/errorHandler";
-import { validateId } from "../../_actions";
-import { validateUpdateUserInfoInput } from "../../_actions";
+import { validateId, validateUpdateUserInfoInput } from "../../_actions";
 import { NextRequest, NextResponse } from "next/server";
 import { UserSummary } from "@/libs/types";
+import logger from "@/libs/logger";
 
 interface Params {
     params: Promise<{
@@ -20,18 +20,34 @@ export async function GET(
     req: NextRequest,
     { params }: Params,
 ): Promise<NextResponse> {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received fetch user request");
+
     const { id } = await params;
     const validated = validateId(id);
 
     if (!validated.valid) return validated.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validated.data) {
-        return NextResponse.json(
+    if (!session.isAuth || session.id !== validated.data) {
+        child.warn(
             {
-                message: "Access not authorized, insufficient privileges",
+                requestedUserId: validated.data,
+                sessionUserId: session.isAuth ? session.id : undefined,
             },
-            { status: 401 },
+            "Unauthorized access attempt to user resource",
+        );
+        return NextResponse.json(
+            { message: "Access not authorized, insufficient privileges" },
+            { status: 403 },
         );
     }
 
@@ -64,23 +80,40 @@ export async function DELETE(
     req: NextRequest,
     { params }: Params,
 ): Promise<NextResponse> {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received soft-delete user request");
+
     const { id } = await params;
     const validated = validateId(id);
 
     if (!validated.valid) return validated.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validated.data) {
-        return NextResponse.json(
+    if (!session.isAuth || session.id !== validated.data) {
+        child.warn(
             {
-                message: "Access not authorized, insufficient privileges",
+                requestedUserId: validated.data,
+                sessionUserId: session.isAuth ? session.id : undefined,
             },
-            { status: 401 },
+            "Unauthorized access attempt to user resource",
+        );
+        return NextResponse.json(
+            { message: "Access not authorized, insufficient privileges" },
+            { status: 403 },
         );
     }
 
     try {
         await softDeleteUserById(validated.data);
+
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return await errorHandler(error);
@@ -88,18 +121,34 @@ export async function DELETE(
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received update user request");
+
     const { id } = await params;
     const validatedId = validateId(id);
 
     if (!validatedId.valid) return validatedId.response;
 
     const session = await verifySession();
-    if (session.isAuth && session.id !== validatedId.data) {
-        return NextResponse.json(
+    if (!session.isAuth || session.id !== validatedId.data) {
+        child.warn(
             {
-                message: "Access not authorized, insufficient privileges",
+                requestedUserId: validatedId.data,
+                sessionUserId: session.isAuth ? session.id : undefined,
             },
-            { status: 401 },
+            "Unauthorized access attempt to user resource",
+        );
+        return NextResponse.json(
+            { message: "Access not authorized, insufficient privileges" },
+            { status: 403 },
         );
     }
 
@@ -112,6 +161,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         const result = await updateUserById(validatedId.data, {
             ...validatedUserInfo.data,
         });
+
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
         return await errorHandler(error);
