@@ -7,6 +7,8 @@ import { cache } from "react";
 import logger from "../logger";
 
 const SESSION_LIFE_SPAN_MILLIS = 60 * 60 * 3 * 1000;
+const SESSION_UPDATE_WINDOW_SECONDS = 60 * 30;
+
 const encodedKey = new TextEncoder().encode(process.env.SESSION_SECRET);
 
 export interface SessionPayload extends JWTPayload {
@@ -104,6 +106,24 @@ export async function updateSession(): Promise<void> {
 
     try {
         const payload = await decryptSession(session);
+
+        const nowSeconds = Date.now() / 1000;
+        const updateThresholdSeconds =
+            (payload.exp ?? 0) - SESSION_UPDATE_WINDOW_SECONDS;
+
+        child.debug({
+            sessionExpirationSeconds: payload.exp,
+            updateThresholdSeconds: updateThresholdSeconds,
+            nowSeconds: nowSeconds,
+        });
+
+        if (payload.exp && nowSeconds < updateThresholdSeconds) {
+            child.trace(
+                { userId: payload.id },
+                "Session expiration too far. Cancelling refresh",
+            );
+            return;
+        }
 
         const expiresAt = new Date(Date.now() + SESSION_LIFE_SPAN_MILLIS);
         const newSession = await encryptSession(payload);
