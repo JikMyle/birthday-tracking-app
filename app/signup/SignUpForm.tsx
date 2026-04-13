@@ -10,12 +10,13 @@ import { FormCardContainer } from "../_components/form/FormCardContainer";
 import { useRouter } from "next/navigation";
 import { signUpUser } from "./_actions";
 import Alert from "../_components/Alert";
-import { InputLabelContainer } from "../_components/form/InputLabelContainer";
-import { TextInput } from "../_components/form/TextInput";
+import { InputLabelContainer } from "../_components/form/input/InputLabelContainer";
+import { TextInput } from "../_components/form/input/TextInput";
 import Button from "../_components/Button";
 import Link from "next/link";
-import { PasswordInput } from "../_components/form/PasswordInput";
+import { PasswordInput } from "../_components/form/input/PasswordInput";
 import { FormState } from "@/libs/types";
+import { BaseInput } from "../_components/form/input/BaseInput";
 
 export default function SignUpForm(): ReactNode {
     const [state, setState] = useState<FormState>({});
@@ -62,22 +63,24 @@ export default function SignUpForm(): ReactNode {
 
             <InputLabelContainer label="Username" htmlFor="username">
                 <TextInput
+                    className="validator"
                     id="username"
                     name="username"
                     autoComplete="username"
                     minLength={2}
+                    maxLength={25}
                     placeholder="Enter username"
                     required={true}
-                    hasValidation={true}
                     defaultValue={state.username}
                     onChange={handleOnChange}
                     error={actionState.errors?.username ?? undefined}
-                    title="Username must be equal to or between 2 to 25 characters long"
+                    title="Username must be within 2 to 25 characters long"
                 />
             </InputLabelContainer>
 
             <InputLabelContainer label="Email Address" htmlFor="email">
                 <TextInput
+                    className="validator"
                     type="email"
                     id="email"
                     name="email"
@@ -85,7 +88,6 @@ export default function SignUpForm(): ReactNode {
                     placeholder="Enter email address"
                     minLength={1}
                     required={true}
-                    hasValidation={true}
                     defaultValue={state.email}
                     onChange={handleOnChange}
                     error={actionState.errors?.email ?? undefined}
@@ -94,29 +96,29 @@ export default function SignUpForm(): ReactNode {
             </InputLabelContainer>
 
             <InputLabelContainer label="Date of Birth" htmlFor="birthdate">
-                <TextInput
+                <BaseInput
+                    className="validator"
                     type="date"
                     id="birthdate"
                     name="birthdate"
                     autoComplete="birthdate"
                     required={true}
-                    hasValidation={true}
                     defaultValue={state.birthdate}
                     onChange={handleOnChange}
                     error={actionState.errors?.birthdate ?? undefined}
                     title="Birthday must be today or a past date"
-                ></TextInput>
+                ></BaseInput>
             </InputLabelContainer>
 
             <InputLabelContainer label="Password" htmlFor="password">
                 <PasswordInput
+                    className="validator"
                     id="password"
                     name="password"
                     placeholder="Enter password"
                     minLength={6}
                     maxLength={64}
                     required={true}
-                    hasValidation={true}
                     title="Password must be within 8 to 64 characters long"
                 />
             </InputLabelContainer>
@@ -126,12 +128,12 @@ export default function SignUpForm(): ReactNode {
                 htmlFor="confirmPassword"
             >
                 <PasswordInput
+                    className="validator"
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
                     placeholder="Enter password again"
                     required={true}
-                    hasValidation={true}
                     title="Confirm password must match password"
                 />
             </InputLabelContainer>
