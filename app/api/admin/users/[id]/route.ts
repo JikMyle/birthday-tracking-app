@@ -1,8 +1,8 @@
 import errorHandler from "@/libs/errorHandler";
-import { validateId } from "@/app/api/_actions";
-import { validateUpdateUserInfoInput } from "@/app/api/_actions";
+import { validateId, validateUpdateUserInfoInput } from "@/app/api/_actions";
 import { getUserById, deleteUserById, updateUserById } from "@/libs/dal/users";
 import { NextRequest, NextResponse } from "next/server";
+import logger from "@/libs/logger";
 
 interface Params {
     params: Promise<{
@@ -14,6 +14,17 @@ export async function GET(
     req: NextRequest,
     { params }: Params,
 ): Promise<NextResponse> {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received fetch user request");
+
     const { id } = await params;
     const validated = validateId(id);
 
@@ -39,6 +50,17 @@ export async function DELETE(
     req: NextRequest,
     { params }: Params,
 ): Promise<NextResponse> {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received delete user request");
+
     const { id } = await params;
     const validated = validateId(id);
 
@@ -46,6 +68,7 @@ export async function DELETE(
 
     try {
         await deleteUserById(validated.data);
+
         return new NextResponse(null, { status: 204 });
     } catch (error) {
         return await errorHandler(error);
@@ -53,6 +76,17 @@ export async function DELETE(
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received update user request");
+
     const { id } = await params;
     const validatedId = validateId(id);
 
@@ -68,6 +102,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             validatedId.data,
             validatedUserData.data,
         );
+
         return NextResponse.json(result, { status: 200 });
     } catch (error) {
         return await errorHandler(error);

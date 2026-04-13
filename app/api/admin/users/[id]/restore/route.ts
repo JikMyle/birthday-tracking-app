@@ -2,6 +2,7 @@ import errorHandler from "@/libs/errorHandler";
 import { validateId } from "@/app/api/_actions";
 import { NextRequest, NextResponse } from "next/server";
 import { restoreUserById } from "@/libs/dal/users";
+import logger from "@/libs/logger";
 
 interface Params {
     params: Promise<{
@@ -10,6 +11,17 @@ interface Params {
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
+    const child = logger.child(
+        {
+            requestId: req.headers.get("x-request-id"),
+            method: req.method,
+            path: req.nextUrl.pathname,
+        },
+        { msgPrefix: "[HTTP] " },
+    );
+
+    child.trace("Received restore user request");
+
     const { id } = await params;
     const validated = validateId(id);
 
