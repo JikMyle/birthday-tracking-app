@@ -1,13 +1,13 @@
 import { EmailPreference } from "@/generated/prisma/enums";
 import { api } from "@/libs/api";
-import { FormState } from "@/libs/types";
+import { FormActionState } from "@/libs/types";
 import {
     CreateUserInput,
     createUserSchema,
 } from "@/libs/validation/userSchemas";
 import z from "zod";
 
-export async function signUpUser(state: FormState, formData: FormData) {
+export async function signUpUser(state: FormActionState, formData: FormData) {
     const payload = Object.fromEntries(formData);
     payload.emailPreference = getEmailPreference(
         payload.emailPreference as string | null,

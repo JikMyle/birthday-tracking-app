@@ -1,7 +1,8 @@
 import { User } from "@/generated/prisma/client";
 
-export interface FormState {
-    formData: Record<string, string | string[]> | null;
+export type FormState = Record<string, string | string[]>;
+
+export interface FormActionState {
     errors: Record<string, string | undefined> | null;
     success: string | null;
 }

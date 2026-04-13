@@ -1,5 +1,11 @@
 "use client";
-import { ReactNode, useActionState, useEffect } from "react";
+import {
+    ChangeEvent,
+    ReactNode,
+    useActionState,
+    useEffect,
+    useState,
+} from "react";
 import { FormCardContainer } from "../_components/form/FormCardContainer";
 import { useRouter } from "next/navigation";
 import { signUpUser } from "./_actions";
@@ -9,36 +15,48 @@ import { TextInput } from "../_components/form/TextInput";
 import Button from "../_components/Button";
 import Link from "next/link";
 import { PasswordInput } from "../_components/form/PasswordInput";
+import { FormState } from "@/libs/types";
 
 export default function SignUpForm(): ReactNode {
-    const [state, formAction, pending] = useActionState(signUpUser, {
-        formData: null,
+    const [state, setState] = useState<FormState>({});
+    const [actionState, formAction, pending] = useActionState(signUpUser, {
         errors: null,
         success: null,
     });
+
     const router = useRouter();
 
     useEffect(() => {
-        if (state.success) router.push("/signin");
-    }, [state]);
+        if (actionState.success) router.push("/signin");
+    }, [actionState]);
+
+    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const name = e.currentTarget.name;
+        const value = e.currentTarget.value;
+
+        const newState = state;
+        newState[name] = value;
+
+        setState(newState);
+    };
 
     return (
         <FormCardContainer
             className="w-full max-w-sm max-md:bg-transparent max-md:shadow-none max-md:py-0"
             action={formAction}
         >
-            {state.success || typeof state.errors === "string" ? (
+            {actionState.success || typeof actionState.errors === "string" ? (
                 <Alert
                     className="grow mb-4"
                     type={
-                        state.success
+                        actionState.success
                             ? "success"
-                            : state.errors
+                            : actionState.errors
                               ? "error"
                               : undefined
                     }
                     style="soft"
-                    text={state.success ?? state.errors ?? ""}
+                    text={actionState.success ?? actionState.errors ?? ""}
                 />
             ) : null}
 
@@ -51,7 +69,9 @@ export default function SignUpForm(): ReactNode {
                     placeholder="Enter username"
                     required={true}
                     hasValidation={true}
-                    error={state.errors?.username ?? undefined}
+                    defaultValue={state.username}
+                    onChange={handleOnChange}
+                    error={actionState.errors?.username ?? undefined}
                     title="Username must be equal to or between 2 to 25 characters long"
                 />
             </InputLabelContainer>
@@ -66,7 +86,9 @@ export default function SignUpForm(): ReactNode {
                     minLength={1}
                     required={true}
                     hasValidation={true}
-                    error={state.errors?.email ?? undefined}
+                    defaultValue={state.email}
+                    onChange={handleOnChange}
+                    error={actionState.errors?.email ?? undefined}
                     title="Must be a valid email address"
                 ></TextInput>
             </InputLabelContainer>
@@ -79,7 +101,9 @@ export default function SignUpForm(): ReactNode {
                     autoComplete="birthdate"
                     required={true}
                     hasValidation={true}
-                    error={state.errors?.birthdate ?? undefined}
+                    defaultValue={state.birthdate}
+                    onChange={handleOnChange}
+                    error={actionState.errors?.birthdate ?? undefined}
                     title="Birthday must be today or a past date"
                 ></TextInput>
             </InputLabelContainer>
@@ -126,6 +150,8 @@ export default function SignUpForm(): ReactNode {
                             id="emailPreferenceNone"
                             value={"none"}
                             required={true}
+                            defaultChecked={state.emailPreference === "none"}
+                            onChange={handleOnChange}
                         />
                         None
                     </label>
@@ -140,6 +166,10 @@ export default function SignUpForm(): ReactNode {
                             name="emailPreference"
                             id="emailPreferenceServer"
                             value={"serveronly"}
+                            defaultChecked={
+                                state.emailPreference === "serveronly"
+                            }
+                            onChange={handleOnChange}
                         />
                         Server Only
                     </label>
@@ -154,6 +184,10 @@ export default function SignUpForm(): ReactNode {
                             name="emailPreference"
                             id="emailPreferenceEveryone"
                             value={"everyone"}
+                            defaultChecked={
+                                state.emailPreference === "everyone"
+                            }
+                            onChange={handleOnChange}
                         />
                         Everyone
                     </label>

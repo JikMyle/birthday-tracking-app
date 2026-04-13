@@ -1,12 +1,12 @@
-import { FormState } from "@/libs/types";
+import { FormActionState } from "@/libs/types";
 import { SignInInput, signInSchema } from "../../libs/validation/authSchemas";
 import { api } from "@/libs/api";
 import z from "zod";
 
 export async function signIn(
-    state: FormState,
+    state: FormActionState,
     formData: FormData,
-): Promise<FormState> {
+): Promise<FormActionState> {
     const credentials = {
         email: formData.get("email"),
         password: formData.get("password"),
