@@ -8,6 +8,7 @@ export function PasswordInput({
     className,
     onBlur,
     error,
+    submitCount,
     ...props
 }: Omit<BaseInputProps, "type">) {
     // Inner error corresponds to validation errors defined directly by input props
@@ -17,7 +18,7 @@ export function PasswordInput({
 
     useEffect(() => {
         error && setInnerError(null);
-    }, [error]);
+    }, [error, submitCount]);
 
     return (
         <div className="join">

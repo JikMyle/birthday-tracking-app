@@ -2,6 +2,7 @@ import { HTMLProps } from "react";
 
 export interface BaseInputProps extends HTMLProps<HTMLInputElement> {
     error?: string;
+    submitCount?: number;
 }
 
 export function BaseInput({ className, error, ...props }: BaseInputProps) {

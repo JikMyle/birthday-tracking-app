@@ -19,7 +19,11 @@ import { FormState } from "@/libs/types";
 import { DateInput } from "../_components/form/input/DateInput";
 
 export default function SignUpForm(): ReactNode {
-    const [state, setState] = useState<FormState>({});
+    const [state, setState] = useState<FormState>({
+        submitCount: 0,
+        formData: {},
+    });
+
     const [actionState, formAction, pending] = useActionState(signUpUser, {
         errors: null,
         success: null,
@@ -36,15 +40,20 @@ export default function SignUpForm(): ReactNode {
         const value = e.currentTarget.value;
 
         const newState = state;
-        newState[name] = value;
+        newState.formData[name] = value;
 
         setState(newState);
+    };
+
+    const handleFormSubmit = (formData: FormData) => {
+        setState((prev) => ({ ...prev, submitCount: prev.submitCount + 1 }));
+        formAction(formData);
     };
 
     return (
         <FormCardContainer
             className="w-full max-w-sm max-md:bg-transparent max-md:shadow-none max-md:py-0"
-            action={formAction}
+            action={handleFormSubmit}
         >
             {actionState.success || typeof actionState.errors === "string" ? (
                 <Alert
@@ -71,10 +80,11 @@ export default function SignUpForm(): ReactNode {
                     maxLength={25}
                     placeholder="Enter username"
                     required={true}
-                    defaultValue={state.username}
                     onChange={handleOnChange}
-                    error={actionState.errors?.username ?? undefined}
                     title="Username must be within 2 to 25 characters long"
+                    defaultValue={state.formData.username}
+                    error={actionState.errors?.username}
+                    submitCount={state.submitCount}
                 />
             </InputLabelContainer>
 
@@ -88,10 +98,11 @@ export default function SignUpForm(): ReactNode {
                     placeholder="Enter email address"
                     minLength={1}
                     required={true}
-                    defaultValue={state.email}
                     onChange={handleOnChange}
-                    error={actionState.errors?.email ?? undefined}
                     title="Must be a valid email address"
+                    defaultValue={state.formData.email}
+                    error={actionState.errors?.email}
+                    submitCount={state.submitCount}
                 ></TextInput>
             </InputLabelContainer>
 
@@ -102,11 +113,12 @@ export default function SignUpForm(): ReactNode {
                     id="birthdate"
                     name="birthdate"
                     required={true}
-                    defaultValue={state.birthdate}
                     max={new Date().toISOString().split("T")[0]}
                     onChange={handleOnChange}
-                    error={actionState.errors?.birthdate ?? undefined}
                     title="Birthday must be today or a past date"
+                    defaultValue={state.formData.birthdate}
+                    error={actionState.errors?.birthdate}
+                    submitCount={state.submitCount}
                 />
             </InputLabelContainer>
 
@@ -120,6 +132,8 @@ export default function SignUpForm(): ReactNode {
                     maxLength={64}
                     required={true}
                     title="Password must be within 8 to 64 characters long"
+                    error={actionState.errors?.password}
+                    submitCount={state.submitCount}
                 />
             </InputLabelContainer>
 
@@ -134,6 +148,8 @@ export default function SignUpForm(): ReactNode {
                     placeholder="Enter password again"
                     required={true}
                     title="Confirm password must match password"
+                    error={actionState.errors?.confirmPassword}
+                    submitCount={state.submitCount}
                 />
             </InputLabelContainer>
 
@@ -151,7 +167,9 @@ export default function SignUpForm(): ReactNode {
                             id="emailPreferenceNone"
                             value={"none"}
                             required={true}
-                            defaultChecked={state.emailPreference === "none"}
+                            defaultChecked={
+                                state.formData.emailPreference === "none"
+                            }
                             onChange={handleOnChange}
                         />
                         None
@@ -168,7 +186,7 @@ export default function SignUpForm(): ReactNode {
                             id="emailPreferenceServer"
                             value={"serveronly"}
                             defaultChecked={
-                                state.emailPreference === "serveronly"
+                                state.formData.emailPreference === "serveronly"
                             }
                             onChange={handleOnChange}
                         />
@@ -186,7 +204,7 @@ export default function SignUpForm(): ReactNode {
                             id="emailPreferenceEveryone"
                             value={"everyone"}
                             defaultChecked={
-                                state.emailPreference === "everyone"
+                                state.formData.emailPreference === "everyone"
                             }
                             onChange={handleOnChange}
                         />

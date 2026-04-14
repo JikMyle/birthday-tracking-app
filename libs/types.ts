@@ -1,6 +1,9 @@
 import { User } from "@/generated/prisma/client";
 
-export type FormState = Record<string, string | string[]>;
+export type FormState = {
+    submitCount: number;
+    formData: Record<string, string | string[]>;
+};
 
 export interface FormActionState {
     errors: Record<string, string | undefined> | null;

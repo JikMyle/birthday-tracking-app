@@ -12,6 +12,7 @@ export function DateInput({
     required,
     error,
     onBlur,
+    submitCount,
     ...props
 }: DateInputProps) {
     // Inner error corresponds to validation errors defined directly by input props
@@ -21,7 +22,7 @@ export function DateInput({
 
     useEffect(() => {
         error && setInnerError(null);
-    }, [error]);
+    }, [error, submitCount]);
 
     return (
         <BaseInput

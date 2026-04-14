@@ -14,6 +14,7 @@ export function TextInput({
     className,
     onBlur,
     error,
+    submitCount,
     ...props
 }: TextInputProps) {
     // Inner error corresponds to validation errors defined directly by input props
@@ -23,7 +24,7 @@ export function TextInput({
 
     useEffect(() => {
         error && setInnerError(null);
-    }, [error]);
+    }, [error, submitCount]);
 
     return (
         <BaseInput
