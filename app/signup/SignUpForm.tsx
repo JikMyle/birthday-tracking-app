@@ -16,7 +16,7 @@ import Button from "../_components/Button";
 import Link from "next/link";
 import { PasswordInput } from "../_components/form/input/PasswordInput";
 import { FormState } from "@/libs/types";
-import { BaseInput } from "../_components/form/input/BaseInput";
+import { DateInput } from "../_components/form/input/DateInput";
 
 export default function SignUpForm(): ReactNode {
     const [state, setState] = useState<FormState>({});
@@ -96,18 +96,18 @@ export default function SignUpForm(): ReactNode {
             </InputLabelContainer>
 
             <InputLabelContainer label="Date of Birth" htmlFor="birthdate">
-                <BaseInput
+                <DateInput
                     className="validator"
                     type="date"
                     id="birthdate"
                     name="birthdate"
-                    autoComplete="birthdate"
                     required={true}
                     defaultValue={state.birthdate}
+                    max={new Date().toISOString().split("T")[0]}
                     onChange={handleOnChange}
                     error={actionState.errors?.birthdate ?? undefined}
                     title="Birthday must be today or a past date"
-                ></BaseInput>
+                />
             </InputLabelContainer>
 
             <InputLabelContainer label="Password" htmlFor="password">
@@ -131,7 +131,6 @@ export default function SignUpForm(): ReactNode {
                     className="validator"
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
                     placeholder="Enter password again"
                     required={true}
                     title="Confirm password must match password"
