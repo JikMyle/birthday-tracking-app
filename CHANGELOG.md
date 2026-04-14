@@ -1,5 +1,25 @@
 # Changelog
 
+## [v0.3.0]
+
+### Added
+
+- Base input component
+- Date input component
+- Validation error handling in input components
+
+### Changed
+
+- FormState interface definition
+
+### Removed
+
+- Logging in sign up form action
+
+### Fixed
+
+- Incorrect state mutation in sign up form
+
 ## [0.2.1]
 
 ### Added
