@@ -13,8 +13,6 @@ export async function signUpUser(state: FormActionState, formData: FormData) {
         payload.emailPreference as string | null,
     ) as FormDataEntryValue;
 
-    console.log(`Received sign up form data: ${JSON.stringify(payload)}`);
-
     const validated = createUserSchema.safeParse(payload);
     if (!validated.success) {
         const errors = z.flattenError(validated.error).fieldErrors;
@@ -27,11 +25,6 @@ export async function signUpUser(state: FormActionState, formData: FormData) {
             success: null,
         };
     }
-
-    console.log(
-        "Sign up form data successfully parsed: " +
-            JSON.stringify(validated.data),
-    );
 
     const response = await fetch(api("/api/auth/signup"), {
         headers: { "Content-Type": "application/json" },

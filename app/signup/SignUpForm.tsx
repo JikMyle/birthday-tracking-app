@@ -39,10 +39,10 @@ export default function SignUpForm(): ReactNode {
         const name = e.currentTarget.name;
         const value = e.currentTarget.value;
 
-        const newState = state;
-        newState.formData[name] = value;
-
-        setState(newState);
+        setState((prev) => ({
+            ...prev,
+            formData: { ...state.formData, [name]: value },
+        }));
     };
 
     const handleFormSubmit = (formData: FormData) => {
