@@ -2,7 +2,7 @@ import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../../generated/prisma/client";
 
-const adapter = new PrismaMariaDb({
+const adapterProps = {
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
@@ -11,8 +11,12 @@ const adapter = new PrismaMariaDb({
     ssl:
         process.env.MYSQL_SSL === "true"
             ? { rejectUnauthorized: false }
-            : undefined,
+            : false,
     connectionLimit: 5,
-});
+    allowPublicKeyRetrieval: process.env.NODE_ENV === "production",
+};
+
+const adapter = new PrismaMariaDb(adapterProps);
 const prisma = new PrismaClient({ adapter });
+
 export { prisma };
