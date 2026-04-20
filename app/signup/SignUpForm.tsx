@@ -81,7 +81,8 @@ export default function SignUpForm(): ReactNode {
                     placeholder="Enter username"
                     required={true}
                     onChange={handleOnChange}
-                    title="Username must be within 2 to 25 characters long"
+                    pattern="^(?=.*[a-zA-Z0-9])\w+$"
+                    title="Must contain letters, numbers, or underscores, but cannot be underscores only."
                     defaultValue={state.formData.username}
                     error={actionState.errors?.username}
                     submitCount={state.submitCount}
@@ -113,6 +114,7 @@ export default function SignUpForm(): ReactNode {
                     id="birthdate"
                     name="birthdate"
                     required={true}
+                    min={new Date(1900, 0, 1).toISOString().split("T")[0]}
                     max={new Date().toISOString().split("T")[0]}
                     onChange={handleOnChange}
                     title="Birthday must be today or a past date"

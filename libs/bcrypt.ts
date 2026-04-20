@@ -9,7 +9,7 @@ export async function encryptPassword(password: string) {
     });
 
     child.trace({ passwordPresent: !!password }, "Encrypting password");
-    const hashed = bcrypt.hash(password, SALT);
+    const hashed = await bcrypt.hash(password, SALT);
     child.trace({ hashPresent: !!hashed }, "Password encrypted");
 
     return hashed;

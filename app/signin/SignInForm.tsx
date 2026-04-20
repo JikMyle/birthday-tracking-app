@@ -58,7 +58,6 @@ export function SignInForm() {
                 <PasswordInput
                     id="password"
                     name="password"
-                    type="password"
                     placeholder="Enter password"
                     minLength={1}
                     required={true}
