@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/libs/db/prisma";
+import prisma from "@/libs/db/prisma";
 import { createSession } from "@/libs/dal/session";
 import errorHandler from "@/libs/errorHandler";
 import { SignInInput, signInSchema } from "@/libs/validation";

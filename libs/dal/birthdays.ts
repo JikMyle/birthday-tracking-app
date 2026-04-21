@@ -1,5 +1,5 @@
 import { Prisma } from "@/generated/prisma/client";
-import { prisma } from "../db/prisma";
+import prisma from "../db/prisma";
 import { MONTHS } from "../months";
 import {
     BirthdaySummary,

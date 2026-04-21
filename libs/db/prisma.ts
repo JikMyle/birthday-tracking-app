@@ -2,6 +2,10 @@ import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "../../generated/prisma/client";
 
+const globalForPrisma = global as unknown as {
+    prisma: PrismaClient;
+};
+
 const adapterProps = {
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
@@ -13,10 +17,15 @@ const adapterProps = {
             ? { rejectUnauthorized: false }
             : false,
     connectionLimit: 5,
-    allowPublicKeyRetrieval: process.env.NODE_ENV === "production",
+    allowPublicKeyRetrieval: true,
 };
 
 const adapter = new PrismaMariaDb(adapterProps);
-const prisma = new PrismaClient({ adapter });
+const prisma =
+    globalForPrisma.prisma ||
+    new PrismaClient({
+        adapter,
+    });
 
-export { prisma };
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export default prisma;
