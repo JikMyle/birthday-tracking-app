@@ -20,7 +20,14 @@ const adapterProps = {
     allowPublicKeyRetrieval: true,
 };
 
-const adapter = new PrismaMariaDb(adapterProps);
+const adapter = new PrismaMariaDb({
+    ...adapterProps,
+    connectTimeout: 10000, // ⬅️ increase (default ~10s, but be explicit)
+    acquireTimeout: 10000, // ⬅️ time to get connection from pool
+    keepAliveDelay: 10000, // ⬅️ helps with TLS reuse (if supported)
+    socketTimeout: 10000,
+});
+
 const prisma =
     globalForPrisma.prisma ||
     new PrismaClient({
