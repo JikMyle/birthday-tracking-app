@@ -1,6 +1,6 @@
 import { EmailPreference, Role, User } from "@/generated/prisma/client";
 import generateFakeUsers from "@/libs/db/generateFakeUsers";
-import { prisma } from "@/libs/db/prisma";
+import prisma from "@/libs/db/prisma";
 import bcrypt from "bcryptjs";
 
 async function main() {
